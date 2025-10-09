@@ -1,0 +1,46 @@
+{
+	"@type":"Process",
+	"Name":"FTM_INT_FACT_NET_SALES_BU",
+	"HasSecurityAccess":false,
+	"Code@Code.link":"FTM_INT_FACT_NET_SALES_BU.ti",
+	"DataSource":
+	{
+		"Type":"ODBC",
+		"dataSourceNameForServer":"DWH_PROD",
+		"dataSourceNameForClient":"DWH_PROD",
+		"userName":"admin_DWH",
+		"password":"",
+		"query":"begin \r\n/* CM */\r\nselect \r\ncase when (da.date >= cast((DATEADD(month, DATEDIFF(month, 0, getdate()), 0)) as date) and\r\nda.date <= cast((dateadd(day, -1, getdate())) as date)) then 'CM Year N' else 'CM Year N-1' end as periode,\r\noc.COD_COMPANY as ORIGIN_COMPANY, \r\nsum(case when alo.COD_ACCOUNTING_LOG = 'ANA' and pm.cod_product_model like 'A-8%' then 0 else sl.AMT_NET_ENTRY_SOURCE_COMP_CUR end *\r\ncase when alo.cod_accounting_log = 'ANA' then case when bac.NUM_BUCHER_ACCOUNT between 300000 and 310000 then -1 else 1 end else -1 end) as montant\r\nfrom accounting.FACT_SAVING_LEDGER sl\r\nleft outer join common.DIM_DAY da on sl.SEQ_ENTRY_DAY = da.SEQ_DAY \r\nleft outer join common.dim_company oc on sl.SEQ_SOURCE_COMPANY = oc.seq_company\r\nleft outer join common.DIM_ACCOUNTING_ACCOUNT aa on sl.SEQ_ACCOUNTING_ACCOUNT = aa.SEQ_ACCOUNTING_ACCOUNT \r\nleft outer join common.DIM_ALLOCATION al on sl.SEQ_ALLOCATION = al.SEQ_ALLOCATION\r\nleft outer join common.DIM_PRODUCT_MODEL pm on sl.SEQ_PRODUCT_MODEL = pm.SEQ_PRODUCT_MODEL\r\nleft outer join common.DIM_ACCOUNTING_CODE ac on sl.SEQ_ACCOUNTING_CODE = ac.SEQ_ACCOUNTING_CODE\r\nleft outer join common.DIM_ACCOUNTING_LOG alo on sl.SEQ_ACCOUNTING_LOG = alo.SEQ_ACCOUNTING_LOG\r\nleft outer join common.DIM_BUCHER_ACCOUNT bac on aa.SEQ_BUCHER_ACCOUNT_DEBIT = bac.SEQ_BUCHER_ACCOUNT\r\nwhere \r\n/* année courante */\r\n((da.date >= cast((DATEADD(month, DATEDIFF(month, 0, getdate()), 0)) as date) and\r\nda.date <= cast((dateadd(day, -1, getdate())) as date))\r\nor \r\n/* année N-1 */\r\n(da.date >= cast((DATEADD(month, DATEDIFF(month, 0, dateadd(year, -1, getdate())), 0)) as date) and\r\nda.date <= cast((dateadd(day, -1, dateadd(year, -1, getdate()))) as date)))\r\nand sl.AMT_NET_ENTRY_SOURCE_COMP_CUR <> 0 \r\nand sl.BIT_UNIQUE_INVOICING = '0'\r\nand bac.NUM_BUCHER_ACCOUNT = 300010\r\nand al.COD_ALLOCATION between '5000' and '5999'\r\nand sl.NUM_CUSTOMER_ORDER not between 'FS   ' and 'FS999'\r\ngroup by \r\ncase when (da.date >= cast((DATEADD(month, DATEDIFF(month, 0, getdate()), 0)) as date) and\r\nda.date <= cast((dateadd(day, -1, getdate())) as date)) then 'CM Year N' else 'CM Year N-1' end,\r\noc.COD_COMPANY \r\nunion all\r\n/* YTD */\r\nselect \r\ncase when (seq_year = year(DATEADD(year, -1, getdate())) and\r\ndate <= cast((dateadd(day, -1, dateadd(year, -1, getdate()))) as date)) then 'YTD Year N-1'  else 'YTD Year N' end as periode,\r\noc.COD_COMPANY as ORIGIN_COMPANY, \r\nsum(case when alo.COD_ACCOUNTING_LOG = 'ANA' and pm.cod_product_model like 'A-8%' then 0 else sl.AMT_NET_ENTRY_SOURCE_COMP_CUR end *\r\ncase when alo.cod_accounting_log = 'ANA' then case when bac.NUM_BUCHER_ACCOUNT between 300000 and 310000 then -1 else 1 end else -1 end) as montant\r\nfrom accounting.FACT_SAVING_LEDGER sl\r\nleft outer join common.DIM_DAY da on sl.SEQ_ENTRY_DAY = da.SEQ_DAY \r\nleft outer join common.dim_company oc on sl.SEQ_SOURCE_COMPANY = oc.seq_company\r\nleft outer join common.DIM_ACCOUNTING_ACCOUNT aa on sl.SEQ_ACCOUNTING_ACCOUNT = aa.SEQ_ACCOUNTING_ACCOUNT \r\nleft outer join common.DIM_ALLOCATION al on sl.SEQ_ALLOCATION = al.SEQ_ALLOCATION\r\nleft outer join common.DIM_PRODUCT_MODEL pm on sl.SEQ_PRODUCT_MODEL = pm.SEQ_PRODUCT_MODEL\r\nleft outer join common.DIM_ACCOUNTING_CODE ac on sl.SEQ_ACCOUNTING_CODE = ac.SEQ_ACCOUNTING_CODE\r\nleft outer join common.DIM_ACCOUNTING_LOG alo on sl.SEQ_ACCOUNTING_LOG = alo.SEQ_ACCOUNTING_LOG\r\nleft outer join common.DIM_BUCHER_ACCOUNT bac on aa.SEQ_BUCHER_ACCOUNT_DEBIT = bac.SEQ_BUCHER_ACCOUNT\r\nwhere \r\n/* année N-1*/\r\n((seq_year = year(DATEADD(year, -1, getdate())) and\r\ndate <= cast((dateadd(day, -1, dateadd(year, -1, getdate()))) as date))\r\nor \r\n/* année courante */\r\n(seq_year = year(getdate()) and\r\ndate <= cast((dateadd(day, -1, getdate())) as date)))\r\nand sl.AMT_NET_ENTRY_SOURCE_COMP_CUR <> 0 \r\nand sl.BIT_UNIQUE_INVOICING = '0'\r\nand bac.NUM_BUCHER_ACCOUNT = 300010\r\nand al.COD_ALLOCATION between '5000' and '5999'\r\nand sl.NUM_CUSTOMER_ORDER not between 'FS   ' and 'FS999'\r\ngroup by \r\ncase when (seq_year = year(DATEADD(year, -1, getdate())) and\r\ndate <= cast((dateadd(day, -1, dateadd(year, -1, getdate()))) as date)) then 'YTD Year N-1'  else 'YTD Year N' end,\r\noc.COD_COMPANY \r\nend"
+	},
+	"Parameters":[],
+	"Variables":
+	[
+		{
+			"Name":"periode",
+			"Type":"String",
+			"Position":1,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"ORIGIN_COMPANY",
+			"Type":"String",
+			"Position":2,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"montant",
+			"Type":"Numeric",
+			"Position":3,
+			"StartByte":0,
+			"EndByte":0
+		}
+	],
+	"UIData": "_ParameterConstraints=e30=\f",
+	"VariablesUIData": [
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f",
+		"VarType=33\fColType=827\f"
+	]
+}

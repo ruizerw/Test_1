@@ -1,0 +1,62 @@
+{
+	"@type":"Process",
+	"Name":"INT_DIM_Country",
+	"HasSecurityAccess":false,
+	"Code@Code.link":"INT_DIM_Country.ti",
+	"DataSource":
+	{
+		"Type":"ODBC",
+		"dataSourceNameForServer":"DWH_PROD",
+		"dataSourceNameForClient":"DWH_PROD",
+		"userName":"admin_DWH",
+		"password":"",
+		"query":"select\r\n    'C-' + COD_COUNTRY as COD_COUNTRY_ERPK,\r\n    COD_ISO_COUNTRY,\r\n    LAB_COUNTRY_FR,\r\n    LAB_COUNTRY_EN,\r\n    case\r\n\t    when cod_regroup = '' then 'DIV'\r\n        when COD_COUNTRY = '-1' or COD_COUNTRY = '-2' then 'DUM'\r\n        else COD_REGROUP\r\n    end as COD_REGROUP\r\nfrom COMMON.DIM_COUNTRY"
+	},
+	"Parameters":[],
+	"Variables":
+	[
+		{
+			"Name":"COD_COUNTRY_ERPK",
+			"Type":"String",
+			"Position":1,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"COD_ISO_COUNTRY",
+			"Type":"String",
+			"Position":2,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"LAB_COUNTRY_FR",
+			"Type":"String",
+			"Position":3,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"LAB_COUNTRY_EN",
+			"Type":"String",
+			"Position":4,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"COD_REGROUP",
+			"Type":"String",
+			"Position":5,
+			"StartByte":0,
+			"EndByte":0
+		}
+	],
+	"UIData": "_ParameterConstraints=e30=\f",
+	"VariablesUIData": [
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f"
+	]
+}

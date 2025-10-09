@@ -1,0 +1,76 @@
+#region Prolog
+
+vdimname='DIM_Current_Month';
+
+# Création ou suppression de la dimension
+if (dimensionexists(vdimname) = 0);
+dimensioncreate(vdimname);
+
+# Création de l'attribut Mois courant FR (Alias)
+attrdelete(vdimname, 'Mois courant FR');
+attrinsert(vdimname, '', 'Mois courant FR', 'A');
+
+# Création de l'attribut Current Month EN (Alias)
+attrdelete(vdimname, 'Current Month EN');
+attrinsert(vdimname, '', 'Current Month EN', 'A');
+
+# Création de l'attribut Current Month POR (Alias)
+attrdelete(vdimname, 'Current Month POR');
+attrinsert(vdimname, '', 'Current Month POR', 'A');
+
+# Création de l'attribut Current Month Teste (Texte)
+attrdelete(vdimname, 'Current_Month_Texte');
+attrinsert(vdimname, '', 'Current_Month_Texte', 'S');
+
+# Création de l'attribut Current_Month_YTD (Alias)
+attrdelete(vdimname, 'Current_Month_YTD');
+attrinsert(vdimname, '', 'Current_Month_YTD', 'A');
+
+# Création de l'attribut Current_Month_YTD_N (Alias)
+attrdelete(vdimname, 'Current_Month_YTD_N');
+attrinsert(vdimname, '', 'Current_Month_YTD_N', 'A');
+
+# Tri des éléments de la dimension
+dimensionsortorder(vdimname, 'ByInput', 'Ascending', 'ByInput', 'Ascending');
+
+else;
+dimensiondeleteallelements(vdimname);
+
+endif;
+
+#endregion
+#region Metadata
+
+vdimname='DIM_Current_Month';
+
+# Insertion des éléments consolidés et des éléments fins
+DimensionElementInsert(vdimname, '', '1', 'N');
+
+#endregion
+#region Data
+
+#Vmois = mois on 2 digits
+#if(long(mois1) = 1);
+# vmois = '0'|mois1;
+#else;
+ #vmois = mois1;
+#endif;
+
+#i f(long(mois) = 1);
+# vmoisN = '0'|mois;
+# else;
+# vmoisN = mois;
+# endif;
+
+vmois = SUBST( '0'|mois1, long('0' | mois1)-1, 2 );
+vmoisN = SUBST( '0'|mois, long('0' | mois)-1, 2 );
+
+# Affectation des attributs
+AttrPutS(vmois, vdimname, '1', 'Mois courant FR');
+AttrPutS(vmois, vdimname, '1', 'Current Month EN');
+AttrPutS(vmois, vdimname, '1', 'Current Month POR');
+AttrPutS('YTD_'|vmois, vdimname, '1', 'Current_Month_Texte');
+AttrPutS(vmois|'_YTD', vdimname, '1', 'Current_Month_YTD');
+AttrPutS('YTD_'|vmoisN, vdimname, '1', 'Current_Month_YTD_N');
+
+#endregion

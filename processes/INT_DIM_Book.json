@@ -1,0 +1,54 @@
+{
+	"@type":"Process",
+	"Name":"INT_DIM_Book",
+	"HasSecurityAccess":false,
+	"Code@Code.link":"INT_DIM_Book.ti",
+	"DataSource":
+	{
+		"Type":"ODBC",
+		"dataSourceNameForServer":"DWH_PROD",
+		"dataSourceNameForClient":"DWH_PROD",
+		"userName":"admin_DWH",
+		"password":"",
+		"query":"Select distinct 'Total Book' as Vtotal, \r\ncase COD_ACCOUNTING_CODE when 'A' then 'Analytics' else 'General' end as 'Compta',\r\nCOD_ACCOUNTING_CODE as SOCOM ,\r\n concat(COD_ACCOUNTING_CODE,COD_ACCOUNTING_LOG) as Origin\r\nfrom \r\nCOMMON.DIM_ACCOUNTING_LOG AL, \r\nCOMMON.DIM_ACCOUNTING_CODE AC\r\n--Actuellement impossible d'interroger le schema Accounting\r\n--,ACCOUNTING.FACT_SAVING_LEDGER FL\r\n--where FL.SEQ_ACCOUNTING_LOG=AL.SEQ_ACCOUNTING_LOG\r\n--and FL.SEQ_ACCOUNTING_CODE=AC.SEQ_ACCOUNTING_CODE"
+	},
+	"Parameters":[],
+	"Variables":
+	[
+		{
+			"Name":"VTOTAL",
+			"Type":"String",
+			"Position":1,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"COMPTA",
+			"Type":"String",
+			"Position":2,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"COCOM",
+			"Type":"String",
+			"Position":3,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"ORIGIN",
+			"Type":"String",
+			"Position":4,
+			"StartByte":0,
+			"EndByte":0
+		}
+	],
+	"UIData": "_ParameterConstraints=e30=\f",
+	"VariablesUIData": [
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f"
+	]
+}

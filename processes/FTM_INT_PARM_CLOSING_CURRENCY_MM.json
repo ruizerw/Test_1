@@ -1,0 +1,62 @@
+{
+	"@type":"Process",
+	"Name":"FTM_INT_PARM_CLOSING_CURRENCY_MM",
+	"HasSecurityAccess":false,
+	"Code@Code.link":"FTM_INT_PARM_CLOSING_CURRENCY_MM.ti",
+	"DataSource":
+	{
+		"Type":"ODBC",
+		"dataSourceNameForServer":"DWH_PROD",
+		"dataSourceNameForClient":"DWH_PROD",
+		"userName":"admin_DWH",
+		"password":"",
+		"query":"begin \r\nSELECT substring(cast([SEQ_MONTH] as varchar(6)), 1, 4) as annee,\r\n\t   substring(cast([SEQ_MONTH] as varchar(6)), 5, 2) as mois\r\n      ,currs.COD_CURRENCY as curr_frm\r\n\t  ,currt.COD_CURRENCY as curr_to\r\n      ,[EXCHANGE_RATE] as curr_rate\r\n  FROM [KUHN_BI_DWH].[UTILITY].[FACT_EXCHANGE_RATE_UTIL] exc\r\n  left outer join common.dim_currency currs on exc.SEQ_SOURCE_CURRENCY = currs.SEQ_CURRENCY\r\n  left outer join common.dim_currency currt on exc.SEQ_TARGET_CURRENCY = currt.SEQ_CURRENCY\r\n  where currs.cod_currency = 'E'\r\nend"
+	},
+	"Parameters":[],
+	"Variables":
+	[
+		{
+			"Name":"annee",
+			"Type":"String",
+			"Position":1,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"mois",
+			"Type":"String",
+			"Position":2,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"curr_frm",
+			"Type":"String",
+			"Position":3,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"curr_to",
+			"Type":"String",
+			"Position":4,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"curr_rate",
+			"Type":"Numeric",
+			"Position":5,
+			"StartByte":0,
+			"EndByte":0
+		}
+	],
+	"UIData": "_ParameterConstraints=e30=\f",
+	"VariablesUIData": [
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f",
+		"VarType=33\fColType=827\f"
+	]
+}

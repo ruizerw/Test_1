@@ -1,0 +1,38 @@
+{
+	"@type":"Process",
+	"Name":"INT_DIM_Prev_IC_Mapping",
+	"HasSecurityAccess":false,
+	"Code@Code.link":"INT_DIM_Prev_IC_Mapping.ti",
+	"DataSource":
+	{
+		"Type":"ODBC",
+		"dataSourceNameForServer":"DWH_PROD",
+		"dataSourceNameForClient":"DWH_PROD",
+		"userName":"admin_DWH",
+		"password":"",
+		"query":"begin\r\nselect \r\ncase when COD_CUSTOMER_GROUP in ('90','99') then  COD_CUSTOMER_GROUP else 'Others' end as code_grpt,\r\ncase when COD_CUSTOMER_GROUP = '90' then '90 - clients KCS / CH'\r\n     when COD_CUSTOMER_GROUP = '99' then '99 - Kuhn Group'\r\n\t else \r\n\t 'Others' end as lib_grpt\r\nfrom common.DIM_CUSTOMER_COGNOS\r\ngroup by case when COD_CUSTOMER_GROUP in ('90','99') then  COD_CUSTOMER_GROUP else 'Others' end, \r\ncase when COD_CUSTOMER_GROUP = '90' then '90 - clients KCS / CH'\r\n     when COD_CUSTOMER_GROUP = '99' then '99 - Kuhn Group'\r\n\t else \r\n\t 'Others' end\r\nend"
+	},
+	"Parameters":[],
+	"Variables":
+	[
+		{
+			"Name":"code_grpt",
+			"Type":"String",
+			"Position":1,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"lib_grpt",
+			"Type":"String",
+			"Position":2,
+			"StartByte":0,
+			"EndByte":0
+		}
+	],
+	"UIData": "_ParameterConstraints=e30=\f",
+	"VariablesUIData": [
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f"
+	]
+}

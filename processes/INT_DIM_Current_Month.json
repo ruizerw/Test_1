@@ -1,0 +1,62 @@
+{
+	"@type":"Process",
+	"Name":"INT_DIM_Current_Month",
+	"HasSecurityAccess":false,
+	"Code@Code.link":"INT_DIM_Current_Month.ti",
+	"DataSource":
+	{
+		"Type":"ODBC",
+		"dataSourceNameForServer":"DWH_PROD",
+		"dataSourceNameForClient":"DWH_PROD",
+		"userName":"admin_DWH",
+		"password":"",
+		"query":"select getdate() as datej , year (getdate()) as année,  year(dateadd(month, -1, getdate())) as annee1, month(getdate()) as mois, month(dateadd(month, -1, getdate())) as mois1 "
+	},
+	"Parameters":[],
+	"Variables":
+	[
+		{
+			"Name":"datej",
+			"Type":"String",
+			"Position":1,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"annee",
+			"Type":"String",
+			"Position":2,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"annee1",
+			"Type":"String",
+			"Position":3,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"mois",
+			"Type":"String",
+			"Position":4,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"mois1",
+			"Type":"String",
+			"Position":5,
+			"StartByte":0,
+			"EndByte":0
+		}
+	],
+	"UIData": "_ParameterConstraints=e30=\f",
+	"VariablesUIData": [
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f"
+	]
+}

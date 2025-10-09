@@ -1,0 +1,117 @@
+#region Prolog
+
+# Création des variables
+sTmpName = 'MARGIN' | TIMST( Now(), '\i\s') | NumberToString( int( 10000000 * (rand() + (rand() \ rand()))));
+sCubeName = 'FTM_DATA_MARGIN';
+
+
+## Dimension Actuality #############################################
+sDimName = 'Actuality';
+vannee_encours =cellgets ('PARAMETRES_CHARGEMENT','Année_encours','Valeur');
+vannee_encours_numerique= stringtonumber(vannee_encours);
+
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+SubsetCreate( sDimName, sTmpName);
+
+vannee_precedente_numerique=vannee_encours_numerique - 1;
+vannee_precedente= numbertostring(vannee_precedente_numerique);
+SubsetElementInsert( sDimName, sTmpName, 'AC'|vannee_precedente, 1);
+SubsetElementInsert( sDimName, sTmpName, 'AC'|vannee_encours, 1);
+
+## 
+
+## Dimension Month ###############################################
+sDimName = 'Month';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+SubsetCreate( sDimName, sTmpName);
+
+  i = 1;
+
+  n = DIMSIZ( sDimName);
+  while( i <= n) ;
+    sElt = DIMNM( sDimName, i);
+    if( ELLEV( sDimName, sElt) = 0) ;
+        SubsetElementInsert( sDimName, sTmpName, sElt, 1);
+    endif;
+    i = i + 1;
+  end;
+
+
+## Dimension Amount_Margin ############################
+sDimName = 'Amount_Prev_Margin';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 0);
+  SubsetCreate( sDimName, sTmpName);
+endif;
+
+SubsetElementInsert( sDimName, sTmpName, 'SALES_ERPK', 1);
+SubsetElementInsert( sDimName, sTmpName, 'SALES', 1);
+SubsetElementInsert( sDimName, sTmpName, 'QTY_ERPK', 1);
+
+
+## Création de la vue ######################################
+ViewCreate( sCubeName, sTmpName);
+
+## Affectation des dimensions à la vue
+ViewSubsetAssign( sCubeName, sTmpName, 'Actuality', sTmpName);
+ViewSubsetAssign( sCubeName, sTmpName, 'Month', sTmpName);
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Origin_Company', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Allocation', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Customer_Supplier', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Configuration', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'Amount_Prev_Margin', sTmpName);
+
+
+## Remise à zéro de la vue du cube
+ViewZeroOut(sCubeName, sTmpName);
+
+#endregion
+#region Data
+
+sCubeName = 'FTM_DATA_MARGIN';
+
+if(stringtonumber(NUM_MONTH) < 10);
+   tmp_mois = '0' | NUM_MONTH;
+else;
+   tmp_mois = NUM_MONTH;
+endif;
+
+cellputn(NET_SALES_EUROS*-1, sCubeName, tmp_mois, 'AC'|NUM_YEAR, ORIGIN_COMPANY, ID_ALLOCATION, COD_CUSTOMER, PRODUCT_MODEL, 'SALES_ERPK');
+cellputn(NET_SALES_EUROS*-1, sCubeName, tmp_mois, 'AC'|NUM_YEAR, ORIGIN_COMPANY, ID_ALLOCATION, COD_CUSTOMER, PRODUCT_MODEL, 'SALES');
+
+cellputn(QUANTITY, sCubeName, tmp_mois, 'AC'|NUM_YEAR, ORIGIN_COMPANY, ID_ALLOCATION, COD_CUSTOMER, PRODUCT_MODEL, 'QTY_ERPK');
+
+#endregion
+#region Epilog
+
+## Suppression de la vue du Cube (à faire en premier sinon la suppression des sous-ensembles est impossible)
+viewdestroy(sCubeName, sTmpName);
+
+## Suppression des sous-ensembles
+SubsetDestroy('Actuality', sTmpName);
+SubsetDestroy('Month', sTmpName);
+SubsetDestroy('DIM_Origin_Company', sTmpName);
+SubsetDestroy('DIM_Allocation', sTmpName);
+SubsetDestroy('DIM_Customer_Supplier', sTmpName);
+SubsetDestroy('DIM_Configuration', sTmpName);
+SubsetDestroy('Amount_Prev_Margin', sTmpName);
+
+#endregion

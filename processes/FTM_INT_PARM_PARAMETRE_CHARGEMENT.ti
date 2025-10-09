@@ -1,0 +1,23 @@
+#region Data
+
+Valeur_mois_numerique= stringtonumber(mois);
+Valeur_conversion_mois= 1000+Valeur_mois_numerique;
+Valeur_mois_chaine = numbertostring (Valeur_conversion_mois);
+Valeur_mois= SUBST(Valeur_mois_chaine,3,2);
+Valeur_date =SUBST(Date_complete,1,10);
+Valeur_mois_debut_chg = subst(numbertostring(1000+stringtonumber(mois_debut_chg)), 3, 2);
+Valeur_mois_fin_chg = subst(numbertostring(1000+stringtonumber(mois_fin_chg)), 3, 2);
+
+Cellputs (Valeur_date,'PARAMETRES_CHARGEMENT','Date_encours','Valeur');
+Cellputs (annee,'PARAMETRES_CHARGEMENT','Année_encours','Valeur');
+Cellputs (Valeur_mois,'PARAMETRES_CHARGEMENT','Mois_encours','Valeur');
+
+Cellputs (date_debut_chg,'PARAMETRES_CHARGEMENT','Date_debut_chg','Valeur');
+Cellputs (annee_debut_chg,'PARAMETRES_CHARGEMENT','Année_debut_chg','Valeur');
+Cellputs (Valeur_mois_debut_chg,'PARAMETRES_CHARGEMENT','Mois_debut_chg','Valeur');
+
+Cellputs (date_fin_chg,'PARAMETRES_CHARGEMENT','Date_fin_chg','Valeur');
+Cellputs (annee_fin_chg,'PARAMETRES_CHARGEMENT','Année_fin_chg','Valeur');
+Cellputs (Valeur_mois_fin_chg,'PARAMETRES_CHARGEMENT','Mois_fin_chg','Valeur');
+
+#endregion

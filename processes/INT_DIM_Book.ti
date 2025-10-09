@@ -1,0 +1,65 @@
+#region Prolog
+
+vdimname='DIM_Book';
+
+# Création ou suppression de la dimension
+if (dimensionexists(vdimname) = 0);
+dimensioncreate(vdimname);
+
+endif;
+
+# Création de l'attribut EN (Alias)
+attrdelete(vdimname, 'VTOTAL');
+attrinsert(vdimname, '', 'VTOTAL', 'S');
+
+# Création de l'attribut EN (Alias)
+attrdelete(vdimname, 'COMPTA');
+attrinsert(vdimname, '', 'COMPTA', 'S');
+
+# Création de l'attribut EN (Alias)
+attrdelete(vdimname, 'COCOM');
+attrinsert(vdimname, '', 'COCOM', 'S');
+
+
+# Création de l'attribut EN (Alias)
+attrdelete(vdimname, 'Description EN');
+attrinsert(vdimname, '', 'Description EN', 'A');
+
+# Création de l'attribut FR (Alias)
+attrdelete(vdimname, 'Désignation FR');
+attrinsert(vdimname, '', 'Désignation FR', 'A');
+
+# Création de l'attribut POR (Alias)
+attrdelete(vdimname, 'Descriçao POR');
+attrinsert(vdimname, '', 'Descriçao POR', 'A');
+
+# Tri des éléments de la dimension
+dimensionsortorder(vdimname, 'ByInput', 'Ascending', 'ByInput', 'Ascending');
+
+dimensiondeleteallelements(vdimname);
+
+#endregion
+#region Metadata
+
+vdimname='DIM_Book';
+
+# Insertion des éléments consolidés et des éléments fins
+DimensionElementInsert(vdimname, '', vtotal, 'C');
+DimensionElementInsert(vdimname, '', compta, 'C');
+DimensionElementInsert(vdimname, '', cocom, 'C');
+DimensionElementInsert(vdimname, '', origin, 'N');
+
+# Lien entre les parents et les enfants
+DimensionElementComponentAdd(vdimname, vtotal, compta, 1);
+DimensionElementComponentAdd(vdimname, compta, cocom, 1);
+DimensionElementComponentAdd(vdimname, cocom, origin, 1);
+
+#endregion
+#region Data
+
+
+#AttrPutS(VTOTAL, vdimname, ORIGIN, 'VTOTAL');
+#AttrPutS(COMPTA, vdimname, ORIGIN, 'COMPTA');
+#AttrPutS(COCOM, vdimname,ORIGIN, 'COCOM');
+
+#endregion

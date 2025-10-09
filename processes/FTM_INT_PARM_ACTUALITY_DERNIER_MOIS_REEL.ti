@@ -1,0 +1,15 @@
+#region Data
+sDimName = 'Actuality';
+
+i = 1;
+
+ n = DIMSIZ(sDimName);
+ while( i <= n) ;
+   sElt = DIMNM( sDimName, i);
+   if( ELLEV( sDimName, sElt) = 0 & attrs(sDimName, sElt, 'Type_Actuality') @= 'AC');
+      AttrPutS(der_mois, sDimName, sElt,'Dernier_mois_réel');
+   endif;
+   i = i + 1;
+ end;
+
+#endregion

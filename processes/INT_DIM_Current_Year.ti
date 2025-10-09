@@ -1,0 +1,52 @@
+#region Prolog
+
+vdimname='DIM_Current_Year';
+
+# Création ou suppression de la dimension
+if (dimensionexists(vdimname) = 0);
+dimensioncreate(vdimname);
+
+# Création de l'attribut Année courante FR (Alias)
+attrdelete(vdimname, 'Année courante FR');
+attrinsert(vdimname, '', 'Année courante FR', 'A');
+
+# Création de l'attribut Current Year EN (Alias)
+attrdelete(vdimname, 'Current Year EN');
+attrinsert(vdimname, '', 'Current Year EN', 'A');
+
+# Création de l'attribut Current Year POR (Alias)
+attrdelete(vdimname, 'Current Year POR');
+attrinsert(vdimname, '', 'Current Year POR', 'A');
+
+# Tri des éléments de la dimension
+dimensionsortorder(vdimname, 'ByInput', 'Ascending', 'ByInput', 'Ascending');
+
+else;
+dimensiondeleteallelements(vdimname);
+
+endif;
+
+#endregion
+#region Metadata
+
+vdimname='DIM_Current_Year';
+
+# Insertion des éléments consolidés et des éléments fins
+DimensionElementInsert(vdimname, '', '1', 'N');
+
+#endregion
+#region Data
+
+PastN2Actuality = 'AC'|annee2;
+PastActuality = 'AC'|annee1;
+CurActuality = 'AC'|annee;
+
+# Affectation des attributs
+AttrPutS(anneem1, vdimname, '1', 'Année courante FR');
+AttrPutS(anneem1, vdimname, '1', 'Current Year EN');
+AttrPutS(anneem1, vdimname, '1', 'Current Year POR');
+#AttrPutS(PastN2Actuality, vdimname, '1', 'PastN2_Actuality');
+#AttrPutS(PastActuality, vdimname, '1', 'Past_Actuality');
+#AttrPutS(CurActuality, vdimname, '1', 'Current_Actuality');
+
+#endregion

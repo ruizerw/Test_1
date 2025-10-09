@@ -1,0 +1,56 @@
+#region Prolog
+
+# Création des variables
+sTmpName = 'SECU_DATA_DIM_ALLOCATION_DIM_ORIGIN_COMPANY' | TIMST( Now(), '\i\s') | NumberToString( int( 10000000 * (rand() + (rand() \ rand()))));
+sCubeName = 'SECU_DATA_DIM_ALLOCATION_DIM_ORIGIN_COMPANY';
+
+
+## Dimension FACT_SECU_ALLOCATION_ORIGIN_COMPANY ############################
+sDimName = 'FACT_SECU_ALLOCATION_ORIGIN_COMPANY';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 0);
+  SubsetCreate( sDimName, sTmpName);
+endif;
+
+SubsetElementInsert( sDimName, sTmpName, 'Valeur', 1);
+
+
+## Création de la vue ######################################
+ViewCreate( sCubeName, sTmpName);
+
+## Affectation des dimensions à la vue
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Origin_Company', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Allocation', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'FACT_SECU_ALLOCATION_ORIGIN_COMPANY', sTmpName);
+
+
+## Remise à zéro de la vue du cube
+ViewZeroOut(sCubeName, sTmpName);
+
+#endregion
+#region Data
+
+#Accès à toutes les sociétés pour les DUMMY
+cellputn(1, sCubeName, COD_COMPANY, '-1', 'Valeur');
+cellputn(1, sCubeName, COD_COMPANY, '-2', 'Valeur');
+cellputn(1, sCubeName, COD_COMPANY, '_0', 'Valeur');
+
+#Accès restreint aux autres destinations
+cellputn(1, sCubeName, COD_COMPANY, ID_ALLOCATION, 'Valeur');
+
+#endregion
+#region Epilog
+
+## Suppression de la vue du Cube (à faire en premier sinon la suppression des sous-ensembles est impossible)
+viewdestroy(sCubeName, sTmpName);
+
+## Suppression des sous-ensembles
+SubsetDestroy('FACT_SECU_ALLOCATION_ORIGIN_COMPANY', sTmpName);
+
+#endregion

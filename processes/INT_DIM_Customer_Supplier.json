@@ -1,0 +1,62 @@
+{
+	"@type":"Process",
+	"Name":"INT_DIM_Customer_Supplier",
+	"HasSecurityAccess":false,
+	"Code@Code.link":"INT_DIM_Customer_Supplier.ti",
+	"DataSource":
+	{
+		"Type":"ODBC",
+		"dataSourceNameForServer":"DWH_PROD",
+		"dataSourceNameForClient":"DWH_PROD",
+		"userName":"admin_DWH",
+		"password":"",
+		"query":"begin\r\nselect c.COD_CUSTOMER,\r\ncase when c.COD_CUSTOMER_GROUP in ('90','99') then  c.COD_CUSTOMER_GROUP else 'Others' end as code_grpt,\r\ncase when c.COD_CUSTOMER_GROUP = '90' then '90 - clients KCS / CH'\r\n     when c.COD_CUSTOMER_GROUP = '99' then '99 - Kuhn Group'\r\n\t else \r\n\t 'Others' end as lib_grpt,\r\nc.LAB_CUSTOMER,\r\nc.COD_RESIDENCE_COUNTRY\r\nfrom common.DIM_CUSTOMER_COGNOS c left outer join accounting.FACT_SAVING_LEDGER s on c.SEQ_CUSTOMER_COGNOS = s.SEQ_INVOICE_CUSTOMER_COGNOS\r\nleft outer join common.DIM_DATE_VIEW d on s.SEQ_ENTRY_DAY = d.SEQ_DAY\r\nwhere (year(d.[DATE]) >= 2010 or d.[DATE] is null) \r\ngroup by c.COD_CUSTOMER,\r\ncase when c.COD_CUSTOMER_GROUP in ('90','99') then  c.COD_CUSTOMER_GROUP else 'Others' end,\r\ncase when c.COD_CUSTOMER_GROUP = '90' then '90 - clients KCS / CH'\r\n     when c.COD_CUSTOMER_GROUP = '99' then '99 - Kuhn Group'\r\n\t else \r\n\t 'Others' end,\r\nc.LAB_CUSTOMER,\r\nc.COD_RESIDENCE_COUNTRY\r\norder by c.COD_CUSTOMER\r\nend"
+	},
+	"Parameters":[],
+	"Variables":
+	[
+		{
+			"Name":"COD_CUSTOMER",
+			"Type":"String",
+			"Position":1,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"code_grpt",
+			"Type":"String",
+			"Position":2,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"lib_grpt",
+			"Type":"String",
+			"Position":3,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"LAB_CUSTOMER",
+			"Type":"String",
+			"Position":4,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"COD_RESIDENCE_COUNTRY",
+			"Type":"String",
+			"Position":5,
+			"StartByte":0,
+			"EndByte":0
+		}
+	],
+	"UIData": "_ParameterConstraints=e30=\f",
+	"VariablesUIData": [
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f"
+	]
+}

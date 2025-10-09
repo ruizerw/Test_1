@@ -1,0 +1,171 @@
+#region Prolog
+
+# Création des variables
+sTmpName = 'FTM_PARM_CLOSING_CURRENCY_MM' | TIMST( Now(), '\i\s') | NumberToString( int( 10000000 * (rand() + (rand() \ rand()))));
+sCubeName = 'FTM_PARM_CLOSING_CURRENCY_MM';
+
+
+## Dimension Actuality #############################################
+sDimName = 'Actuality';
+vannee_encours =cellgets ('PARAMETRES_CHARGEMENT','Année_encours','Valeur');
+vannee_encours_numerique= stringtonumber(vannee_encours);
+
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+SubsetCreate( sDimName, sTmpName);
+
+  i = 1;
+
+  n = DIMSIZ( sDimName);
+  while( i <= n) ;
+    sElt = DIMNM( sDimName, i);
+    if( ELLEV( sDimName, sElt) = 0 & ELISANC(sDimName, 'Total_Actuals', sElt) = 1) ;
+        SubsetElementInsert( sDimName, sTmpName, sElt, 1);
+    endif;
+    i = i + 1;
+  end;
+
+## Dimension Month ###############################################
+sDimName = 'Month';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+SubsetCreate( sDimName, sTmpName);
+
+  i = 1;
+
+  n = DIMSIZ( sDimName);
+  while( i <= n) ;
+    sElt = DIMNM( sDimName, i);
+    if( ELLEV( sDimName, sElt) = 0) ;
+        SubsetElementInsert( sDimName, sTmpName, sElt, 1);
+    endif;
+    i = i + 1;
+  end;
+
+
+## Dimension Devise_From ###############################################
+sDimName = 'Devise_From';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+SubsetCreate( sDimName, sTmpName);
+
+  i = 1;
+
+  n = DIMSIZ( sDimName);
+  while( i <= n) ;
+    sElt = DIMNM( sDimName, i);
+    if( ELLEV( sDimName, sElt) = 0) ;
+        SubsetElementInsert( sDimName, sTmpName, sElt, 1);
+    endif;
+    i = i + 1;
+  end;
+
+
+## Dimension Devise_To ###############################################
+sDimName = 'Devise_To';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+SubsetCreate( sDimName, sTmpName);
+
+  i = 1;
+
+  n = DIMSIZ( sDimName);
+  while( i <= n) ;
+    sElt = DIMNM( sDimName, i);
+    if( ELLEV( sDimName, sElt) = 0) ;
+        SubsetElementInsert( sDimName, sTmpName, sElt, 1);
+    endif;
+    i = i + 1;
+  end;
+
+
+## Dimension Hyp_Closing_Currency ############################
+sDimName = 'Hyp_Closing_Currency';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 0);
+  SubsetCreate( sDimName, sTmpName);
+endif;
+
+SubsetElementInsert( sDimName, sTmpName, 'Currency_Rate', 1);
+
+
+## Création de la vue ######################################
+ViewCreate( sCubeName, sTmpName);
+
+## Affectation des dimensions à la vue
+ViewSubsetAssign( sCubeName, sTmpName, 'Actuality', sTmpName);
+ViewSubsetAssign( sCubeName, sTmpName, 'Month', sTmpName);
+ViewSubsetAssign( sCubeName, sTmpName, 'Devise_From', sTmpName);
+ViewSubsetAssign( sCubeName, sTmpName, 'Devise_To', sTmpName);
+ViewSubsetAssign( sCubeName, sTmpName, 'Hyp_Closing_Currency', sTmpName);
+
+
+## Remise à zéro de la vue du cube
+ViewZeroOut(sCubeName, sTmpName);
+
+#endregion
+#region Data
+
+vDimName = 'Actuality'; 
+i = 1; 
+n = dimsiz(vDimName); 
+
+while (i <=n);
+  sElt = dimnm(vDimName, i ); 
+  if( ELLEV( vDimName, sElt) = 0 & ELISANC(vDimName, 'Total_Actuals', sElt) = 1) ;
+  
+  sAnnee = attrs(vDimName, sElt, 'Année_ref'); 
+
+  if(sAnnee @= annee); 
+
+  currency_from = 'DF__' | curr_to;
+
+  currency_to = 'DT__E';
+
+  cellputn(1/curr_rate, sCubeName, sElt, mois, currency_from, currency_to, 'Currency_Rate');
+
+  endif;
+ endif;
+  i = i +1; 
+end; 
+
+#endregion
+#region Epilog
+
+## Suppression de la vue du Cube (à faire en premier sinon la suppression des sous-ensembles est impossible)
+viewdestroy(sCubeName, sTmpName);
+
+## Suppression des sous-ensembles
+SubsetDestroy('Actuality', sTmpName);
+SubsetDestroy('Month', sTmpName);
+SubsetDestroy('Devise_From', sTmpName);
+SubsetDestroy('Devise_To', sTmpName);
+SubsetDestroy('Hyp_Closing_Currency', sTmpName);
+
+#endregion

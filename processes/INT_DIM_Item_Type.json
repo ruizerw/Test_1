@@ -1,0 +1,54 @@
+{
+	"@type":"Process",
+	"Name":"INT_DIM_Item_Type",
+	"HasSecurityAccess":false,
+	"Code@Code.link":"INT_DIM_Item_Type.ti",
+	"DataSource":
+	{
+		"Type":"ODBC",
+		"dataSourceNameForServer":"DWH_PROD",
+		"dataSourceNameForClient":"DWH_PROD",
+		"userName":"admin_DWH",
+		"password":"",
+		"query":"SELECT [COD_TURNOVER_TYPE] as Item_Type\r\n      \r\n      ,[LAB_TURNOVER_TYPE_FR] as Item_description_FR\r\n      ,[LAB_TURNOVER_TYPE_EN] as Item_description_EN\r\n      ,[LAB_TURNOVER_TYPE_PT] as Item_description_PT\r\n      \r\n  FROM [KUHN_BI_DWH].[COMMON].[DIM_TURNOVER_TYPE]"
+	},
+	"Parameters":[],
+	"Variables":
+	[
+		{
+			"Name":"Item_Type",
+			"Type":"String",
+			"Position":1,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"Item_description_FR",
+			"Type":"String",
+			"Position":2,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"Item_description_EN",
+			"Type":"String",
+			"Position":3,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"Item_description_PT",
+			"Type":"String",
+			"Position":4,
+			"StartByte":0,
+			"EndByte":0
+		}
+	],
+	"UIData": "_ParameterConstraints=e30=\f",
+	"VariablesUIData": [
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f"
+	]
+}

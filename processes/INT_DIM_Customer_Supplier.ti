@@ -1,0 +1,147 @@
+#region Prolog
+
+vdimname='DIM_Customer_Supplier';
+pass = '';
+prempass = '';
+
+if  (dimensionexists(vdimname)=0);
+dimensioncreate(vdimname);
+endif;
+
+attrdelete(vdimname, 'Code-Name');
+attrinsert(vdimname, '', 'Code-Name', 'A');
+
+# Création de l'attribut Country (Attribut)
+attrdelete(vdimname, 'Country');
+attrinsert(vdimname, '', 'Country', 'S');
+
+# Création de l'attribut LEVEL1 (Texte)
+attrdelete(vdimname, 'LEVEL1');
+attrinsert(vdimname, '', 'LEVEL1', 'S');
+
+# Création de l'attribut Code (Texte)
+attrdelete(vdimname, 'Code');
+attrinsert(vdimname, '', 'Code', 'S');
+
+# Création de l'attribut Groupe (Texte)
+attrdelete(vdimname, 'Group');
+attrinsert(vdimname, '', 'Group', 'S');
+
+dimensionsortorder(vdimname, 'ByName', 'Ascending', 'ByHierarchy', 'Ascending');
+
+dimensiondeleteallelements(vdimname);
+
+#endregion
+#region Metadata
+
+vdimname='DIM_Customer_Supplier';
+
+totcli = 'Total_Customer_Supplier';
+
+
+# Insertion des éléments consolidés et des éléments fins
+DimensionElementInsert(vdimname, '', COD_CUSTOMER, 'N');
+dimensionelementinsert(vdimname, '', lib_grpt, 'C');
+dimensionelementinsert(vdimname, '', totcli, 'C');
+
+# Lien entre les parents et les enfants
+DimensionElementComponentAdd(vdimname, totcli, lib_grpt, 1);
+DimensionElementComponentAdd(vdimname, lib_grpt, COD_CUSTOMER, 1);
+
+if(pass @= '');
+
+# On force la création d'un DUMMY1 du Others
+
+# Insertion des éléments consolidés et des éléments fins
+DimensionElementInsert(vdimname, '', 'DUMMY1', 'N');
+dimensionelementinsert(vdimname, '', 'Others', 'C');
+
+# Lien entre les parents et les enfants
+DimensionElementComponentAdd(vdimname, totcli, 'Others', 1);
+DimensionElementComponentAdd(vdimname, 'Others', 'DUMMY1', 1);
+
+
+# On force la création d'un DUMMY2 du groupement 99
+
+# Insertion des éléments consolidés et des éléments fins
+DimensionElementInsert(vdimname, '', 'DUMMY2', 'N');
+dimensionelementinsert(vdimname, '', '99 - Kuhn Group', 'C');
+
+# Lien entre les parents et les enfants
+DimensionElementComponentAdd(vdimname, totcli, '99 - Kuhn Group', 1);
+DimensionElementComponentAdd(vdimname, '99 - Kuhn Group', 'DUMMY2', 1);
+
+# On force la création d'un DUMMY3 du groupement 99
+
+# Insertion des éléments consolidés et des éléments fins
+DimensionElementInsert(vdimname, '', 'DUMMY3', 'N');
+dimensionelementinsert(vdimname, '', '90 - clients KCS / CH', 'C');
+
+# Lien entre les parents et les enfants
+DimensionElementComponentAdd(vdimname, totcli, '90 - clients KCS / CH', 1);
+DimensionElementComponentAdd(vdimname, '90 - clients KCS / CH', 'DUMMY3', 1);
+
+pass = 'O';
+
+endif;
+
+#endregion
+#region Data
+
+vcodenom = COD_CUSTOMER|' - '|LAB_CUSTOMER;
+
+# Affectation des attributs
+
+AttrPutS(vcodenom, vdimname, COD_CUSTOMER, 'Code-Name');
+AttrPutS(lib_grpt, vdimname, COD_CUSTOMER, 'LEVEL1');
+AttrPutS(code_grpt, vdimname, COD_CUSTOMER, 'Group');
+AttrPutS(COD_CUSTOMER, vdimname, COD_CUSTOMER, 'Code');
+AttrPutS(COD_RESIDENCE_COUNTRY, vdimname, COD_CUSTOMER, 'Country');
+
+if(prempass @= '');
+
+# DUMMY 1
+
+AttrPutS('DUMMY1 - No Available', vdimname, 'DUMMY1', 'Code-Name');
+AttrPutS( 'Others', vdimname, 'DUMMY1', 'LEVEL1');
+AttrPutS('', vdimname, 'DUMMY1', 'Group');
+AttrPutS('DUMMY1', vdimname, 'DUMMY1', 'Code');
+
+# DUMMY 2
+
+AttrPutS('DUMMY2 - No Available', vdimname, 'DUMMY2', 'Code-Name');
+AttrPutS( '99 - Kuhn Group', vdimname, 'DUMMY2', 'LEVEL1');
+AttrPutS('99', vdimname, 'DUMMY2', 'Group');
+AttrPutS('DUMMY2', vdimname, 'DUMMY2', 'Code');
+
+
+# DUMMY 3
+
+AttrPutS('DUMMY3 - No Available', vdimname, 'DUMMY3', 'Code-Name');
+AttrPutS('90 - clients KCS / CH', vdimname, 'DUMMY3', 'LEVEL1');
+AttrPutS('90', vdimname, 'DUMMY3', 'Group');
+AttrPutS('DUMMY3', vdimname, 'DUMMY3', 'Code');
+
+prempass = 'N';
+
+endif;
+
+#endregion
+#region Epilog
+
+sDimName = 'DIM_Customer_Supplier';
+sTmpName = 'Niveau_0';
+
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+SubsetCreatebyMDX(sTmpName, '{TM1SORT( {TM1FILTERBYLEVEL( {TM1SUBSETALL([DIM_Customer_Supplier] )}, 0)}, ASC)} ' );
+
+sElt = SubsetGetElementName(sDimName, sTmpName, 1);
+SubsetElementInsert(sDimName, sTmpName, sElt, 1);
+SubsetElementDelete(sDimName, sTmpName, 1);
+
+#endregion

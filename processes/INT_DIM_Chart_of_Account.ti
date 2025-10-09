@@ -1,0 +1,195 @@
+#region Prolog
+
+vdimname='DIM_Chart_of_Account';
+
+if (dimensionexists(vdimname) = 0);
+dimensioncreate(vdimname);
+
+# Création de l'attribut Code(Alias)
+attrinsert(vdimname, '', 'Code', 'A');
+
+# Création de l'attribut EN(Alias)
+attrinsert(vdimname, '', 'Description EN', 'A');
+
+# Création de l'attribut FR (Alias)
+attrinsert(vdimname, '', 'Désignation FR', 'A');
+
+# Création de l'attribut POR (Alias)
+attrinsert(vdimname, '', 'Descriçao POR', 'A');
+
+# Création de l'attribut Bucher_Account_Debit (texte)
+attrinsert(vdimname, '', 'Bucher_Account_Debit', 'S');
+
+# Création de l'attribut Bucher_Account_Credit (texte)
+attrinsert(vdimname, '', 'Bucher_Account_Credit', 'S');
+
+# Création de l'attribut LEVEL1 (texte)
+attrinsert(vdimname, '', 'LEVEL1', 'S');
+
+# Création de l'attribut Code8(texte)
+attrinsert(vdimname, '', 'Code8', 'S');
+
+else;
+
+# Création de l'attribut Code(Alias)
+attrdelete(vdimname, 'Code');
+attrinsert(vdimname, '', 'Code', 'A');
+
+# Création de l'attribut EN(Alias)
+attrdelete(vdimname, 'Description EN');
+attrinsert(vdimname, '', 'Description EN', 'A');
+
+# Création de l'attribut FR (Alias)
+attrdelete(vdimname, 'Désignation FR');
+attrinsert(vdimname, '', 'Désignation FR', 'A');
+
+# Création de l'attribut POR (Alias)
+attrdelete(vdimname, 'Descriçao POR');
+attrinsert(vdimname, '', 'Descriçao POR', 'A');
+
+# Création de l'attribut Bucher_Account_Debit (texte)
+attrdelete(vdimname, 'Bucher_Account_Debit');
+attrinsert(vdimname, '', 'Bucher_Account_Debit', 'S');
+
+# Création de l'attribut Bucher_Account_Credit (texte)
+attrdelete(vdimname, 'Bucher_Account_Credit');
+attrinsert(vdimname, '', 'Bucher_Account_Credit', 'S');
+
+# Création de l'attribut LEVEL1 (texte)
+attrdelete(vdimname, 'LEVEL1');
+attrinsert(vdimname, '', 'LEVEL1', 'S');
+
+# Création de l'attribut Code8 (texte)
+attrdelete(vdimname, 'Code8');
+attrinsert(vdimname, '', 'Code8', 'S');
+
+dimensiondeleteallelements(vdimname);
+
+
+endif; 
+
+# Tri des éléments de la dimension
+dimensionsortorder(vdimname, 'ByInput', 'Ascending', 'ByHierarchy', 'Ascending');
+
+#endregion
+#region Metadata
+
+vdimname='DIM_Chart_of_Account';
+TOTAL_COMPTE='TOTAL CHART OF ACCOUNT';
+
+# Insertion des éléments consolidés et des éléments fins
+DimensionElementInsert(vdimname, '', TOTAL_COMPTE, 'C');
+DimensionElementInsert(vdimname, '', bilanresultat, 'C');
+DimensionElementInsert(vdimname, '', COD_ACCOUNT_REGROUPMENT, 'C');
+DimensionElementInsert(vdimname, '', COD_BUCHER_ATTRIBUTE, 'C');
+DimensionElementInsert(vdimname, '', COD_ACCOUNT_NATURE, 'C');
+DimensionElementInsert(vdimname, '', COD_ACCOUNT_GROUP, 'C');
+DimensionElementInsert(vdimname, '', COD_ACCOUNTING_ACCOUNT, 'N');
+
+# Lien entre les parents et les enfants
+DimensionElementComponentAdd(vdimname, TOTAL_COMPTE, bilanresultat, 1);
+DimensionElementComponentAdd(vdimname, bilanresultat, COD_ACCOUNT_REGROUPMENT, 1);
+DimensionElementComponentAdd(vdimname, COD_ACCOUNT_REGROUPMENT, COD_BUCHER_ATTRIBUTE, 1);
+DimensionElementComponentAdd(vdimname, COD_BUCHER_ATTRIBUTE, COD_ACCOUNT_NATURE, 1);
+DimensionElementComponentAdd(vdimname, COD_ACCOUNT_NATURE, COD_ACCOUNT_GROUP, 1);
+DimensionElementComponentAdd(vdimname, COD_ACCOUNT_GROUP, COD_ACCOUNTING_ACCOUNT, 1);
+
+#endregion
+#region Data
+
+vNomRgp = COD_ACCOUNT_REGROUPMENT;
+vLibRgpFR = COD_ACCOUNT_REGROUPMENT | '-' | LAB_ACCOUNT_REGROUPMENT_FR;
+vLibRgpEN = COD_ACCOUNT_REGROUPMENT | '-' | LAB_ACCOUNT_REGROUPMENT_EN;
+
+vNomAbi = COD_BUCHER_ATTRIBUTE;
+vLibAbiFR = COD_BUCHER_ATTRIBUTE | '-' | LAB_BUCHER_ATTRIBUTE_FR;
+vLibAbiEN = COD_BUCHER_ATTRIBUTE | '-' | LAB_BUCHER_ATTRIBUTE_EN;
+
+vNomNac =  COD_ACCOUNT_NATURE;
+vLibNacFR = COD_ACCOUNT_NATURE | '-' | LAB_ACCOUNT_NATURE_FR;
+vLibNacEN = COD_ACCOUNT_NATURE | '-' | LAB_ACCOUNT_NATURE_EN;
+
+vNomGrp = COD_ACCOUNT_GROUP;
+vNomGrpFR = COD_ACCOUNT_GROUP | 'FR';
+vNomGrpEN = COD_ACCOUNT_GROUP | 'EN';
+vLibGrpFR = COD_ACCOUNT_GROUP | '-' | LAB_ACCOUNT_GROUP_FR;
+vLibGrpEN = COD_ACCOUNT_GROUP | '-' | LAB_ACCOUNT_GROUP_EN;
+
+vNomCpt = COD_ACCOUNTING_ACCOUNT;
+vNomCptFR = COD_ACCOUNTING_ACCOUNT | 'FR';
+vNomCptEN = COD_ACCOUNTING_ACCOUNT | 'EN';
+vLibCptFR = COD_ACCOUNTING_ACCOUNT | '-' | LAB_ACCOUNTING_ACCOUNT_FR;
+vLibCptEN = COD_ACCOUNTING_ACCOUNT | '-' | LAB_ACCOUNTING_ACCOUNT_EN;
+
+
+# Affectation des attributs
+#AttrPutS(vNomRgp, vdimname, sk_cpgrprg, 'Code');
+#AttrPutS(vNomAbi, vdimname, sk_cpgrpbi, 'Code');
+#AttrPutS(vNomNac, vdimname, sk_cpgrpnc, 'Code');
+#AttrPutS(vNomGrp, vdimname, PLCOMP|SK_CPGRPP, 'Code');
+#AttrPutS(vNomCpt, vdimname, sk_cpplcp, 'Code');
+
+
+#AttrPutS(cptgn, vdimname, sk_cpplcp, 'Code8');
+
+#AttrPutS(nucor, vdimname, sk_cpplcp, 'Bucher_Account_Debit');
+#AttrPutS(nucorc, vdimname, sk_cpplcp, 'Bucher_Account_Credit');
+
+AttrPutS(COD_ACCOUNTING_ACCOUNT, vdimname, COD_ACCOUNTING_ACCOUNT, 'LEVEL1');
+
+AttrPutS(vLibRgpFR, vdimname, COD_ACCOUNT_REGROUPMENT, 'Désignation FR');
+AttrPutS(vLibRgpEN, vdimname, COD_ACCOUNT_REGROUPMENT, 'Description EN');
+AttrPutS(vLibNacFR, vdimname,  COD_ACCOUNT_NATURE, 'Désignation FR');
+AttrPutS(vLibNacEN, vdimname,  COD_ACCOUNT_NATURE, 'Description EN');
+AttrPutS(vLibAbiFR, vdimname,  COD_BUCHER_ATTRIBUTE, 'Désignation FR');
+AttrPutS(vLibAbiEN, vdimname,  COD_BUCHER_ATTRIBUTE, 'Description EN');
+
+
+if (LAB_ACCOUNT_GROUP_FR @= '');
+AttrPutS(vNomGrpFR, vdimname, COD_ACCOUNT_GROUP, 'Désignation FR');
+else;
+AttrPutS(vLibGrpFR, vdimname, COD_ACCOUNT_GROUP, 'Désignation FR');
+endif;
+
+if (LAB_ACCOUNTING_ACCOUNT_FR @= '');
+AttrPutS(vNomCptFR, vdimname, COD_ACCOUNTING_ACCOUNT, 'Désignation FR');
+else;
+AttrPutS(vLibCptFR, vdimname, COD_ACCOUNTING_ACCOUNT, 'Désignation FR');
+endif;
+
+if (LAB_ACCOUNT_GROUP_EN @= '');
+AttrPutS(vNomGrpEN, vdimname,COD_ACCOUNT_GROUP, 'Description EN');
+AttrPutS(vNomGrpEN, vdimname,COD_ACCOUNT_GROUP, 'Descriçao POR');
+else;
+AttrPutS(vLibGrpEN, vdimname, COD_ACCOUNT_GROUP, 'Description EN');
+AttrPutS(vLibGrpEN, vdimname, COD_ACCOUNT_GROUP, 'Descriçao POR');
+endif;
+
+if(LAB_ACCOUNTING_ACCOUNT_EN @= '');
+AttrPutS(vNomCptEN, vdimname, COD_ACCOUNTING_ACCOUNT, 'Description EN');
+AttrPutS(vNomCptEN, vdimname, COD_ACCOUNTING_ACCOUNT, 'Descriçao POR');
+else;
+AttrPutS(vLibCptEN, vdimname, COD_ACCOUNTING_ACCOUNT, 'Description EN');
+AttrPutS(vLibCptEN, vdimname, COD_ACCOUNTING_ACCOUNT, 'Descriçao POR');
+endif;
+
+#endregion
+#region Epilog
+
+## Création sous-élément niveau 0  #############################
+## Dimension Compte_Comptable #############################
+sDimName = 'DIM_Chart_of_Account';
+sTmpName = 'Niveau_0';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+SubsetCreatebyMDX(sTmpName, '{TM1SORT( {TM1FILTERBYLEVEL( {TM1SUBSETALL([DIM_Chart_of_Account] )}, 0)}, ASC)} ' );
+
+sElt = SubsetGetElementName(sDimName, sTmpName, 1);
+SubsetElementInsert(sDimName, sTmpName, sElt, 1);
+SubsetElementDelete(sDimName, sTmpName, 1);
+
+#endregion

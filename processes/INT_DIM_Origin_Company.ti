@@ -1,0 +1,153 @@
+#region Prolog
+
+vdimname='DIM_Origin_Company';
+
+# Création ou suppression de la dimension
+if (dimensionexists(vdimname) = 0);
+dimensioncreate(vdimname);
+
+# Création de l'attribut Origin Company (Attribut)
+attrdelete(vdimname, 'Origin Company');
+attrinsert(vdimname, '', 'Origin Company', 'S');
+
+# Création de l'attribut Country (Attribut)
+attrdelete(vdimname, 'Country');
+attrinsert(vdimname, '', 'Country', 'S');
+
+# Création de l'attribut Nom FR (Alias)
+attrdelete(vdimname, 'Nom FR');
+attrinsert(vdimname, '', 'Nom FR', 'A');
+
+# Création de l'attribut Name EN (Alias)
+attrdelete(vdimname, 'Name EN');
+attrinsert(vdimname, '', 'Name EN', 'A');
+
+# Création de l'attribut Nome POR (Alias)
+attrdelete(vdimname, 'Nome POR');
+attrinsert(vdimname, '', 'Nome POR', 'A');
+
+# Création de l'attribut Currency (Attribut)
+attrdelete(vdimname, 'Currency');
+attrinsert(vdimname, '', 'Currency', 'S');
+
+# Création de l'attribut Type(Attribut)
+attrdelete(vdimname, 'Type');
+attrinsert(vdimname, '', 'Type', 'S');
+
+# Création de l'attribut Company_SAP (Alias)
+attrdelete(vdimname, 'Company_SAP');
+attrinsert(vdimname, '', 'Company_SAP', 'A');
+
+# Création de l'attribut Is_In_SAP (Attribut)
+attrdelete(vdimname, 'Is_In_SAP');
+attrinsert(vdimname, '', 'Is_In_SAP', 'S');
+
+# Tri des éléments de la dimension
+dimensionsortorder(vdimname, 'ByInput', 'Ascending', 'ByInput', 'Ascending');
+
+else;
+
+# Création de l'attribut Origin Company (Attribut)
+attrdelete(vdimname, 'Origin Company');
+attrinsert(vdimname, '', 'Origin Company', 'S');
+
+# Création de l'attribut Country (Attribut)
+attrdelete(vdimname, 'Country');
+attrinsert(vdimname, '', 'Country', 'S');
+
+# Création de l'attribut Nom FR (Alias)
+attrdelete(vdimname, 'Nom FR');
+attrinsert(vdimname, '', 'Nom FR', 'A');
+
+# Création de l'attribut Name EN (Alias)
+attrdelete(vdimname, 'Name EN');
+attrinsert(vdimname, '', 'Name EN', 'A');
+
+# Création de l'attribut Nome POR (Alias)
+attrdelete(vdimname, 'Nome POR');
+attrinsert(vdimname, '', 'Nome POR', 'A');
+
+# Création de l'attribut Currency (Attribut)
+attrdelete(vdimname, 'Currency');
+attrinsert(vdimname, '', 'Currency', 'S');
+
+# Création de l'attribut Type(Attribut)
+attrdelete(vdimname, 'Type');
+attrinsert(vdimname, '', 'Type', 'S');
+
+# Création de l'attribut Company_SAP (Alias)
+attrdelete(vdimname, 'Company_SAP');
+attrinsert(vdimname, '', 'Company_SAP', 'A');
+
+# Création de l'attribut Is_In_SAP (Attribut)
+attrdelete(vdimname, 'Is_In_SAP');
+attrinsert(vdimname, '', 'Is_In_SAP', 'S');
+
+dimensiondeleteallelements(vdimname);
+
+endif;
+
+#endregion
+#region Metadata
+
+vdimname='DIM_Origin_Company';
+vtotal='Total Origin Company';
+
+# Insertion des éléments consolidés et des éléments fins
+DimensionElementInsert(vdimname, '', vtotal, 'C');
+DimensionElementInsert(vdimname, '', COD_COMPANY, 'N');
+
+# Lien entre les parents et les enfants
+DimensionElementComponentAdd(vdimname, vtotal, COD_COMPANY, 1);
+
+#endregion
+#region Data
+
+AttrPutS(LAB_COMPANY_FR, vdimname, COD_COMPANY, 'Nom FR');
+AttrPutS(LAB_COMPANY_EN, vdimname, COD_COMPANY, 'Name EN');
+AttrPutS(LAB_COMPANY_PT, vdimname, COD_COMPANY, 'Nome POR');
+AttrPutS(COD_CURRENCY, vdimname, COD_COMPANY, 'Currency');
+AttrPutS(COD_COUNTRY, vdimname, COD_COMPANY, 'Country');
+AttrPutS(COD_COMPANY_TYPE, vdimname, COD_COMPANY, 'Type');
+AttrPutS(COD_COMPANY, vdimname, COD_COMPANY, 'Origin Company');
+
+#endregion
+#region Epilog
+
+## Création Vue BUP  #############################
+
+sTmpName = 'BUP';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( vDimName, sTmpName) = 1) ;
+  SubsetDeleteAllElements( vDimName, sTmpName);
+endif;
+
+i = 1;
+k = DIMSIZ( vDimName);
+      while( i <= k) ;
+          sElt = DIMNM( vDimName, i);
+             if(attrs(vDimName, sElt, 'Type') @= 'K');
+                     SubsetElementInsert( vDimName, sTmpName, sElt, 1);
+            endif;
+         i = i + 1;
+      end;
+
+
+## Création élément Niveau_0 #######################
+
+sDimName = 'DIM_Origin_Company';
+sTmpName = 'Niveau_0';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+SubsetCreatebyMDX(sTmpName, '{TM1SORT( {TM1FILTERBYLEVEL( {TM1SUBSETALL([DIM_Origin_Company] )}, 0)}, ASC)} ' );
+
+sElt = SubsetGetElementName(sDimName, sTmpName, 1);
+SubsetElementInsert(sDimName, sTmpName, sElt, 1);
+SubsetElementDelete(sDimName, sTmpName, 1);
+
+#endregion

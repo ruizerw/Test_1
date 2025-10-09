@@ -1,0 +1,167 @@
+#region Prolog
+
+if(parm_typechg @= '');
+   vdimname='DIM_Configuration';
+endif;
+
+# Création ou suppression de la dimension
+if (dimensionexists(vdimname) = 0);
+dimensioncreate(vdimname);
+endif;
+
+# Création de l'attribut EN(Alias)
+attrdelete(vdimname, 'Description EN');
+attrinsert(vdimname, '', 'Description EN', 'A');
+
+# Création de l'attribut FR (Alias)
+attrdelete(vdimname, 'Désignation FR');
+attrinsert(vdimname, '', 'Désignation FR', 'A');
+
+# Création de l'attribut POR (Alias)
+attrdelete(vdimname, 'Descriçao POR');
+attrinsert(vdimname, '', 'Descriçao POR', 'A');
+
+# Création de l'attribut LEVEL1
+attrdelete(vdimname, 'LEVEL1');
+attrinsert(vdimname, '', 'LEVEL1', 'S');
+
+# Création de l'attribut Sub-family
+attrdelete(vdimname, 'Sub-family');
+attrinsert(vdimname, '', 'Sub-family', 'S');
+
+# Création de l'attribut Code
+attrdelete(vdimname, 'Code');
+attrinsert(vdimname, '', 'Code', 'A');
+
+# Création de l'attribut Model
+attrdelete(vdimname, 'Model');
+attrinsert(vdimname, '', 'Model', 'A');
+
+# Création de l'attribut Model
+attrdelete(vdimname, 'SF-Model');
+attrinsert(vdimname, '', 'SF-Model', 'A');
+
+
+dimensiondeleteallelements(vdimname);
+
+# Tri des éléments de la dimension
+dimensionsortorder(vdimname, 'ByInput', 'Ascending', 'ByHierarchy', 'Ascending');
+
+#endregion
+#region Metadata
+
+if(parm_typechg @= '');
+   vdimname='DIM_Configuration';
+endif;
+
+TOTAL_PRODUIT ='TOTAL PRODUCT';
+
+Code_LINEPROD= 'L-'|COD_PRODUCT_LINE;
+Code_FAMPROD='F-'|COD_PRODUCT_FAMILY;
+Code_SSFAMPROD='SF-'|COD_PRODUCT_SUBFAMILY;
+Code_MODELPROD='MOD-'|COD_PRODUCT_MODEL;
+
+
+   # Insertion des éléments consolidés et des éléments fins
+DimensionElementInsert(vdimname, '', TOTAL_PRODUIT, 'C');
+DimensionElementInsert(vdimname, '', Code_LINEPROD, 'C');
+DimensionElementInsert(vdimname, '', Code_FAMPROD, 'C');
+DimensionElementInsert(vdimname, '', Code_SSFAMPROD, 'C');
+DimensionElementInsert(vdimname, '', Code_MODELPROD, 'N');
+
+   # Lien entre les parents et les enfants
+DimensionElementComponentAdd(vdimname, TOTAL_PRODUIT, Code_LINEPROD, 1);
+DimensionElementComponentAdd(vdimname, Code_LINEPROD, Code_FAMPROD, 1);
+DimensionElementComponentAdd(vdimname, Code_FAMPROD, Code_SSFAMPROD, 1);
+DimensionElementComponentAdd(vdimname, Code_SSFAMPROD, Code_MODELPROD, 1);
+
+#endregion
+#region Data
+
+Lib_LIG_PROD_FR= 'L - '|COD_PRODUCT_LINE|' - '|lab_product_line_fr;
+Lib_LIG_PROD_EN= 'L - '|COD_PRODUCT_LINE|' - '|lab_product_line_en;
+Lib_LIG_PROD_PT= 'L - '|COD_PRODUCT_LINE|' - '|lab_product_line_PT;
+
+Lib_FAM_PROD_FR='F - '|cod_product_family|' - '|lab_product_family_fr;
+Lib_FAM_PROD_EN='F - '|cod_product_family|' - '|lab_product_family_en;
+Lib_FAM_PROD_PT='F - '|cod_product_family|' - '|lab_product_family_pt;
+
+Lib_SSFAM_PROD_FR='SF - '|cod_product_subfamily|' -'|lab_product_subfamily_fr;
+Lib_SSFAM_PROD_EN='SF - '|cod_product_subfamily|' -'|lab_product_subfamily_EN;
+Lib_SSFAM_PROD_PT='SF - '|cod_product_subfamily|' -'|lab_product_subfamily_PT;
+
+Lib_MODEL_PROD_FR = 'MOD - '|COD_PRODUCT_MODEL|' - '| LAB_MODEL_FR ;
+Lib_MODEL_PROD_EN =  'MOD - '|COD_PRODUCT_MODEL|' - '| LAB_MODEL_EN;
+Lib_MODEL_PROD_PT = 'MOD - '|COD_PRODUCT_MODEL|' - '| LAB_MODEL_PT ;
+
+Code_LINEPROD= 'L-'|COD_PRODUCT_LINE;
+Code_FAMPROD='F-'|COD_PRODUCT_FAMILY;
+Code_SSFAMPROD='SF-'|COD_PRODUCT_SUBFAMILY;
+Code_MODELPROD='MOD-'|COD_PRODUCT_MODEL;
+Code_SF_Model = '0-'|cod_product_subfamily|' - '|cod_product_model;
+
+vcode = '0-'|COD_PRODUCT_MODEL;
+
+if(parm_typechg @<> 'MODEL');
+
+   AttrPutS(Lib_LIG_PROD_FR, vdimname, Code_LINEPROD, 'Désignation FR');
+   AttrPutS(Lib_LIG_PROD_EN, vdimname, Code_LINEPROD, 'Description EN');
+   AttrPutS(Lib_LIG_PROD_PT, vdimname, Code_LINEPROD, 'Descriçao POR');
+
+   AttrPutS(Lib_FAM_PROD_FR, vdimname, Code_FAMPROD, 'Désignation FR');
+   AttrPutS(Lib_FAM_PROD_EN, vdimname, Code_FAMPROD, 'Description EN');
+   AttrPutS(Lib_FAM_PROD_PT, vdimname, Code_FAMPROD, 'Descriçao POR');
+
+   AttrPutS(Lib_SSFAM_PROD_FR, vdimname, Code_SSFAMPROD, 'Désignation FR');
+   AttrPutS(Lib_SSFAM_PROD_EN, vdimname, Code_SSFAMPROD, 'Description EN');
+   AttrPutS(Lib_SSFAM_PROD_PT, vdimname, Code_SSFAMPROD, 'Descriçao POR');
+
+   AttrPutS(Lib_MODEL_PROD_FR, vdimname, Code_MODELPROD, 'Désignation FR');
+   AttrPutS(Lib_MODEL_PROD_EN, vdimname, Code_MODELPROD, 'Description EN');
+   AttrPutS(Lib_MODEL_PROD_PT, vdimname, Code_MODELPROD, 'Descriçao POR');
+
+   AttrPutS(Code_SSFAMPROD, vdimname, Code_MODELPROD, 'LEVEL1');
+   AttrPutS(Code_SSFAMPROD, vdimname, Code_MODELPROD, 'Sub-family');
+
+endif;
+
+  AttrPutS(vcode, vdimname,  Code_MODELPROD, 'Code');
+  AttrPutS(Code_SF_Model, vdimname,  Code_MODELPROD, 'SF-Model');
+
+#endregion
+#region Epilog
+
+if(parm_typechg @= '');
+   sDimName='DIM_Configuration';
+else;
+   if(parm_typechg @= 'MARKET');
+      sDimName='DIM_Configuration_Market';
+   else;
+      sDimName='DIM_Configuration_Alias_Model';
+   endif;
+endif;
+
+sTmpName = 'Niveau_0';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble Niveau 0
+SubsetCreate( sDimName, sTmpName);
+
+i = 1;
+j = 1;
+
+n = DIMSIZ( sDimName);
+while( i <= n) ;
+  sElt = DIMNM( sDimName, i);
+  if( ELLEV( sDimName, sElt) = 0) ;
+    SubsetElementInsert( sDimName, sTmpName, sElt, j);
+    j = j + 1;
+  endif;
+  i = i + 1;
+end;
+
+#endregion

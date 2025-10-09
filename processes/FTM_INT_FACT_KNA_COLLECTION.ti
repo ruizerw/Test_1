@@ -1,0 +1,77 @@
+#region Prolog
+
+# Création des variables
+sTmpName = 'FTM_DATA_KNA_COLLECTION' | TIMST( Now(), '\i\s') | NumberToString( int( 10000000 * (rand() + (rand() \ rand()))));
+sCubeName = 'FTM_DATA_KNA_COLLECTION';
+
+
+## Dimension Actuality #############################################
+sDimName = 'Actuality';
+vannee_encours =cellgets ('PARAMETRES_CHARGEMENT','Année_encours','Valeur');
+vannee_encours_numerique= stringtonumber(vannee_encours);
+
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+SubsetCreate( sDimName, sTmpName);
+
+vannee_N2_numerique=vannee_encours_numerique - 2;
+vannee_N1_numerique=vannee_encours_numerique - 1;
+vannee_precedente= numbertostring(vannee_N2_numerique);
+SubsetElementInsert( sDimName, sTmpName, 'AC'|vannee_precedente, 1);
+
+vannee_precedente= numbertostring(vannee_N1_numerique);
+SubsetElementInsert( sDimName, sTmpName, 'AC'|vannee_precedente, 1);
+
+SubsetElementInsert( sDimName, sTmpName, 'AC'|vannee_encours, 1);
+
+
+## Dimension FACT_AMOUNT ############################
+sDimName = 'FACT_AMOUNT';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 0);
+  SubsetCreate( sDimName, sTmpName);
+endif;
+
+SubsetElementInsert( sDimName, sTmpName, 'Amount', 1);
+
+
+## Création de la vue ######################################
+ViewCreate( sCubeName, sTmpName);
+
+## Affectation des dimensions à la vue
+ViewSubsetAssign( sCubeName, sTmpName, 'Actuality', sTmpName);
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Origin_Company', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Chart_of_Account', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'FACT_AMOUNT', sTmpName);
+
+
+## Remise à zéro de la vue du cube
+ViewZeroOut(sCubeName, sTmpName);
+
+#endregion
+#region Data
+
+cellputn(Amount, 'FTM_DATA_KNA_COLLECTION', company, actuality, account, 'Amount');
+
+#endregion
+#region Epilog
+
+## Suppression de la vue du Cube (à faire en premier sinon la suppression des sous-ensembles est impossible)
+viewdestroy(sCubeName, sTmpName);
+
+## Suppression des sous-ensembles
+SubsetDestroy('Actuality', sTmpName);
+SubsetDestroy('FACT_AMOUNT', sTmpName);
+
+#endregion

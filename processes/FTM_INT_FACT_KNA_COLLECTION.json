@@ -1,0 +1,54 @@
+{
+	"@type":"Process",
+	"Name":"FTM_INT_FACT_KNA_COLLECTION",
+	"HasSecurityAccess":false,
+	"Code@Code.link":"FTM_INT_FACT_KNA_COLLECTION.ti",
+	"DataSource":
+	{
+		"Type":"ODBC",
+		"dataSourceNameForServer":"DWH_PROD",
+		"dataSourceNameForClient":"DWH_PROD",
+		"userName":"admin_DWH",
+		"password":"",
+		"query":"begin\r\nSELECT \r\nsrcc.COD_COMPANY as company, concat('AC', dd.SEQ_YEAR) as actuality, concat('C-', aa.COD_ACCOUNTING_ACCOUNT) as account, sum(fsl.AMT_NET_ENTRY_SOURCE_COMP_CUR) as amount\r\n  FROM [KUHN_BI_DWH].[ACCOUNTING].[FACT_SAVING_LEDGER] fsl\r\n  left outer join common.DIM_COMPANY srcc on fsl.SEQ_SOURCE_COMPANY = srcc.SEQ_COMPANY\r\n  left outer join common.DIM_ACCOUNTING_CODE ac on fsl.SEQ_ACCOUNTING_CODE = ac.SEQ_ACCOUNTING_CODE\r\n  left outer join common.DIM_ACCOUNTING_LOG al on fsl.SEQ_ACCOUNTING_LOG = al.SEQ_ACCOUNTING_LOG\r\n  left outer join common.DIM_ACCOUNTING_ACCOUNT aa on fsl.SEQ_ACCOUNTING_ACCOUNT = aa.SEQ_ACCOUNTING_ACCOUNT\r\n  left outer join common.DIM_DAY dd on fsl.SEQ_ENTRY_DAY = dd.SEQ_DAY\r\n  where srcc.COD_COMPANY = 'T'\r\n  and ac.COD_ACCOUNTING_CODE = 'C'\r\n  and al.COD_ACCOUNTING_LOG = 'RGT'\r\n  and aa.COD_ACCOUNTING_ACCOUNT in ('511210', '511220')\r\n  /* Année courante */\r\n  and ((dd.SEQ_DAY >= year((dateadd(day, ((day(getdate())-1)*-1), getdate()))) * 10000 + month((dateadd(day, ((day(getdate())-1)*-1), getdate()))) * 100\r\n  + day((dateadd(day, ((day(getdate())-1)*-1), getdate())))\r\n  and dd.SEQ_DAY <= year((dateadd(day, -1, getdate()))) * 10000 + month((dateadd(day, -1, getdate()))) * 100\r\n  + day((dateadd(day, -1, getdate()))))\r\n  /* Année N-1 */\r\n  or (dd.SEQ_DAY >= year(dateadd(year, -1, dateadd(day, ((day(getdate())-1)*-1), getdate()))) * 10000 + month(dateadd(year, -1, dateadd(day, ((day(getdate())-1)*-1), getdate()))) * 100\r\n  + day(dateadd(year, -1, dateadd(day, ((day(getdate())-1)*-1), getdate())))\r\n  and dd.SEQ_DAY <= year(dateadd(year, -1, dateadd(day, -1, getdate()))) * 10000 + month(dateadd(year, -1, dateadd(day, -1, getdate()))) * 100\r\n  + day(dateadd(year, -1, dateadd(day, -1, getdate()))))\r\n    /* Année N-2 */\r\n  or (dd.SEQ_DAY >= year(dateadd(year, -2, dateadd(day, ((day(getdate())-1)*-1), getdate()))) * 10000 + month(dateadd(year, -2, dateadd(day, ((day(getdate())-1)*-1), getdate()))) * 100\r\n  + day(dateadd(year, -2, dateadd(day, ((day(getdate())-1)*-1), getdate())))\r\n  and dd.SEQ_DAY <= year(dateadd(year, -2, dateadd(day, -1, getdate()))) * 10000 + month(dateadd(year, -2, dateadd(day, -1, getdate()))) * 100\r\n  + day(dateadd(year, -2, dateadd(day, -1, getdate())))))\r\n group by srcc.COD_COMPANY, dd.SEQ_YEAR, aa.COD_ACCOUNTING_ACCOUNT\r\n order by srcc.COD_COMPANY, dd.SEQ_YEAR, aa.COD_ACCOUNTING_ACCOUNT\r\n end"
+	},
+	"Parameters":[],
+	"Variables":
+	[
+		{
+			"Name":"company",
+			"Type":"String",
+			"Position":1,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"actuality",
+			"Type":"String",
+			"Position":2,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"account",
+			"Type":"String",
+			"Position":3,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"amount",
+			"Type":"Numeric",
+			"Position":4,
+			"StartByte":0,
+			"EndByte":0
+		}
+	],
+	"UIData": "_ParameterConstraints=e30=\f",
+	"VariablesUIData": [
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f",
+		"VarType=33\fColType=827\f"
+	]
+}

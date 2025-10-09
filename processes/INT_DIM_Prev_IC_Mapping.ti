@@ -1,0 +1,69 @@
+#region Prolog
+
+vdimname='DIM_Prev_IC_mapping';
+
+# Création ou suppression de la dimension
+if (dimensionexists(vdimname) = 0);
+dimensioncreate(vdimname);
+
+# Création de l'attribut Groupement_Alias (Alias)
+attrdelete(vdimname, 'Groupement_Alias');
+attrinsert(vdimname, '', 'Groupement_Alias', 'A');
+
+# Création de l'attribut Groupement_Name (Texte)
+attrdelete(vdimname, 'Groupement_Name');
+attrinsert(vdimname, '', 'Groupement_Name', 'S');
+
+# Création de l'attribut Groupement (Texte)
+attrdelete(vdimname, 'Groupement');
+attrinsert(vdimname, '', 'Groupement', 'S');
+
+
+# Tri des éléments de la dimension
+dimensionsortorder(vdimname, 'ByName', 'Ascending', 'ByHierarchy', 'Ascending');
+
+endif;
+
+#endregion
+#region Metadata
+
+totcli = 'Total_Customer_Supplier';
+
+vdimname='DIM_Prev_IC_mapping';
+
+totcli = 'Total_Customer_Supplier';
+
+# Insertion des éléments consolidés et des éléments fins
+dimensionelementinsert(vdimname, '', code_grpt, 'N');
+dimensionelementinsert(vdimname, '', totcli, 'C');
+
+# Lien entre les parents et les enfants
+DimensionElementComponentAdd(vdimname, totcli, code_grpt, 1);
+
+#endregion
+#region Data
+
+AttrPutS(lib_grpt, vdimname, code_grpt, 'Groupement');
+AttrPutS(lib_grpt, vdimname, code_grpt, 'Groupement_Name');
+AttrPutS(lib_grpt, vdimname, code_grpt, 'Groupement_Alias');
+
+#endregion
+#region Epilog
+
+## Création élément Niveau_0 #######################
+
+sDimName = 'DIM_Prev_IC_Mapping';
+sTmpName = 'Niveau_0';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+SubsetCreatebyMDX(sTmpName, '{TM1SORT( {TM1FILTERBYLEVEL( {TM1SUBSETALL([DIM_Prev_IC_Mapping] )}, 0)}, ASC)} ' );
+
+sElt = SubsetGetElementName(sDimName, sTmpName, 1);
+SubsetElementInsert(sDimName, sTmpName, sElt, 1);
+SubsetElementDelete(sDimName, sTmpName, 1);
+
+#endregion

@@ -1,0 +1,187 @@
+#region Prolog
+# Création des variables
+if (parm_cube @= 'BUP');
+
+  sTmpName = 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP' | TIMST( Now(), '\i\s') | NumberToString( int( 10000000 * (rand() + (rand() \ rand()))));
+  sCubeName = 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP';
+
+else;
+
+  sTmpName = 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO' | TIMST( Now(), '\i\s') | NumberToString( int( 10000000 * (rand() + (rand() \ rand()))));
+  sCubeName = 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO';
+
+endif;
+
+
+## Dimension Actuality #############################################
+sDimName = 'Actuality';
+vannee_encours =cellgets ('PARAMETRES_CHARGEMENT','Année_encours','Valeur');
+vannee_encours_numerique= stringtonumber(vannee_encours);
+
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 0);
+  SubsetCreate( sDimName, sTmpName);
+endif;
+  i = 1;
+
+  n = DIMSIZ( sDimName);
+  while( i <= n) ;
+    sElt = DIMNM( sDimName, i);
+    if( ELLEV( sDimName, sElt) = 0) ;
+        SubsetElementInsert( sDimName, sTmpName, sElt, 1);
+    endif;
+    i = i + 1;
+  end;
+
+
+## Dimension Month ###############################################
+sDimName = 'Month';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 0);
+  SubsetCreate( sDimName, sTmpName);
+endif;
+
+  i = 1;
+
+  n = DIMSIZ( sDimName);
+  while( i <= n) ;
+    sElt = DIMNM( sDimName, i);
+    if( ELLEV( sDimName, sElt) = 0) ;
+        SubsetElementInsert( sDimName, sTmpName, sElt, 1);
+    endif;
+    i = i + 1;
+  end;
+
+
+## Dimension Amount_MARGIN_CONSOLIDATED_BY_MODEL ############################
+sDimName = 'Amount_MARGIN_CONSOLIDATED_BY_MODEL';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 0);
+  SubsetCreate( sDimName, sTmpName);
+endif;
+
+        SubsetElementInsert( sDimName, sTmpName, 'GROSS_SALES', 1);
+        SubsetElementInsert( sDimName, sTmpName, 'QTY_MACHINE', 1);
+        SubsetElementInsert( sDimName, sTmpName, 'DISCOUNT_ON_INVOICE', 1);
+        SubsetElementInsert( sDimName, sTmpName, 'DISCOUNT_OFF_INVOICE', 1);
+        SubsetElementInsert( sDimName, sTmpName, 'WARRANTY', 1);
+        SubsetElementInsert( sDimName, sTmpName, 'FREIGHT_PACKAGING', 1);
+        SubsetElementInsert( sDimName, sTmpName, 'TOTAL_COST', 1);
+        SubsetElementInsert( sDimName, sTmpName, 'DB1_COST', 1);
+        SubsetElementInsert( sDimName, sTmpName, 'ENGINEERING_COST', 1);
+
+
+## Création de la vue ######################################
+ViewCreate( sCubeName, sTmpName);
+
+## Affectation des dimensions à la vue
+ViewSubsetAssign( sCubeName, sTmpName, 'Actuality', sTmpName);
+ViewSubsetAssign( sCubeName, sTmpName, 'Month', sTmpName);
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Origin_Company', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Company_Owner', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Country', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Configuration', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'Amount_MARGIN_CONSOLIDATED_BY_MODEL', sTmpName);
+
+
+## Remise à zéro de la vue du cube
+ViewZeroOut(sCubeName, sTmpName);
+
+#endregion
+#region Data
+
+if (parm_cube @= 'CONSO');
+
+ if(interco @<> 'I');
+
+   vMttPrec = cellgetn('FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'GROSS_SALES');
+   cellputn(vMttPrec+MTBRT, 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'GROSS_SALES');
+
+   vMttPrec = cellgetn('FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'QTY_MACHINE');
+   cellputn(vMttPrec+NMACV, 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'QTY_MACHINE');
+
+   vMttPrec = cellgetn('FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'DISCOUNT_ON_INVOICE');
+   cellputn(vMttPrec+MTREMF, 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'DISCOUNT_ON_INVOICE');
+
+   vMttPrec = cellgetn('FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'DISCOUNT_OFF_INVOICE');
+   cellputn(vMttPrec+MTREMHF, 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'DISCOUNT_OFF_INVOICE');
+
+   vMttPrec = cellgetn('FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'WARRANTY');
+   cellputn(vMttPrec+MTAVGAR, 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'WARRANTY');
+
+   vMttPrec = cellgetn('FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'FREIGHT_PACKAGING');
+   cellputn(vMttPrec+MTPOREM, 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'FREIGHT_PACKAGING');
+
+   vMttPrec = cellgetn('FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'TOTAL_COST');
+   cellputn(vMttPrec+MTPRC, 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'TOTAL_COST');
+
+   vMttPrec = cellgetn('FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'DB1_COST');
+   cellputn(vMttPrec+MTDB1, 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'DB1_COST');
+
+   vMttPrec = cellgetn('FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'ENGINEERING_COST');
+   cellputn(vMttPrec+MTBE, 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_CONSO', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'ENGINEERING_COST');
+
+ endif;
+
+else;
+
+   vMttPrec = cellgetn('FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'GROSS_SALES');
+   cellputn(vMttPrec+MTBRT, 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'GROSS_SALES');
+
+   vMttPrec = cellgetn('FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'QTY_MACHINE');
+   cellputn(vMttPrec+NMACV, 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'QTY_MACHINE');
+
+   vMttPrec = cellgetn('FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'DISCOUNT_ON_INVOICE');
+   cellputn(vMttPrec+MTREMF, 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'DISCOUNT_ON_INVOICE');
+
+   vMttPrec = cellgetn('FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'DISCOUNT_OFF_INVOICE');
+   cellputn(vMttPrec+MTREMHF, 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'DISCOUNT_OFF_INVOICE');
+
+   vMttPrec = cellgetn('FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'WARRANTY');
+   cellputn(vMttPrec+MTAVGAR, 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'WARRANTY');
+
+   vMttPrec = cellgetn('FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'FREIGHT_PACKAGING');
+   cellputn(vMttPrec+MTPOREM, 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'FREIGHT_PACKAGING');
+
+   vMttPrec = cellgetn('FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'TOTAL_COST');
+   cellputn(vMttPrec+MTPRC, 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'TOTAL_COST');
+
+   vMttPrec = cellgetn('FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'DB1_COST');
+   cellputn(vMttPrec+MTDB1, 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'DB1_COST');
+
+   vMttPrec = cellgetn('FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'ENGINEERING_COST');
+   cellputn(vMttPrec+MTBE, 'FTM_DATA_MARGIN_CONSOLIDATED_BY_MODEL_BUP', sk_soorg, sk_sofct, 'AC'|anrec, morec, sk_nopayp, sk_gnfctmd, 'ENGINEERING_COST');
+
+
+endif;
+
+#endregion
+#region Epilog
+
+## Suppression de la vue du Cube (à faire en premier sinon la suppression des sous-ensembles est impossible)
+viewdestroy(sCubeName, sTmpName);
+
+## Suppression des sous-ensembles
+SubsetDestroy('Actuality', sTmpName);
+SubsetDestroy('Month', sTmpName);
+SubsetDestroy('Amount_MARGIN_CONSOLIDATED_BY_MODEL', sTmpName);
+
+#endregion

@@ -1,0 +1,81 @@
+#region Prolog
+
+vdimname='DIM_Item_Type';
+
+# Création ou suppression de la dimension
+if (dimensionexists(vdimname) = 0);
+dimensioncreate(vdimname);
+
+# Création de l'attribut Nom FR (Alias)
+attrdelete(vdimname, 'Nom FR');
+attrinsert(vdimname, '', 'Nom FR', 'A');
+
+# Création de l'attribut Name EN (Alias)
+attrdelete(vdimname, 'Name EN');
+attrinsert(vdimname, '', 'Name EN', 'A');
+
+# Création de l'attribut Nome POR (Alias)
+attrdelete(vdimname, 'Nome POR');
+attrinsert(vdimname, '', 'Nome POR', 'A');
+
+# Tri des éléments de la dimension
+dimensionsortorder(vdimname, 'ByInput', 'Ascending', 'ByInput', 'Ascending');
+
+else;
+
+# Création de l'attribut Nom FR (Alias)
+attrdelete(vdimname, 'Nom FR');
+attrinsert(vdimname, '', 'Nom FR', 'A');
+
+# Création de l'attribut Name EN (Alias)
+attrdelete(vdimname, 'Name EN');
+attrinsert(vdimname, '', 'Name EN', 'A');
+
+# Création de l'attribut Nome POR (Alias)
+attrdelete(vdimname, 'Nome POR');
+attrinsert(vdimname, '', 'Nome POR', 'A');
+
+dimensiondeleteallelements(vdimname);
+
+endif;
+
+#endregion
+#region Metadata
+
+vdimname='DIM_Item_Type';
+vtotal='Total Item Type';
+
+# Insertion des éléments consolidés et des éléments fins
+DimensionElementInsert(vdimname, '', vtotal, 'C');
+DimensionElementInsert(vdimname, '', Item_Type, 'N');
+
+# Lien entre les parents et les enfants
+DimensionElementComponentAdd(vdimname, vtotal, Item_Type, 1);
+
+#endregion
+#region Data
+
+AttrPutS(Item_description_FR, vdimname, Item_Type, 'Nom FR');
+AttrPutS(Item_description_EN, vdimname, Item_Type, 'Name EN');
+AttrPutS(Item_description_PT, vdimname, Item_Type, 'Nome POR');
+
+#endregion
+#region Epilog
+
+## Création élément Niveau_0 #######################
+
+sDimName = 'DIM_Item_Type';
+sTmpName = 'Niveau_0';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+SubsetCreatebyMDX(sTmpName, '{TM1SORT( {TM1FILTERBYLEVEL( {TM1SUBSETALL([DIM_Item_Type] )}, 0)}, ASC)} ' );
+
+sElt = SubsetGetElementName(sDimName, sTmpName, 1);
+SubsetElementInsert(sDimName, sTmpName, sElt, 1);
+SubsetElementDelete(sDimName, sTmpName, 1);
+
+#endregion

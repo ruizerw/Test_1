@@ -1,0 +1,87 @@
+#region Prolog
+
+vdimname = 'DIM_Country';
+
+if (DimensionExists(vdimname) = 0);
+    DimensionCreate(vdimname);
+endif;
+
+AttrDelete(vdimname, 'Country Code');
+AttrInsert(vdimname, '', 'Country Code', 'S');
+
+AttrDelete(vdimname, 'Country Name FR');
+AttrInsert(vdimname, '', 'Country Name FR', 'A');
+
+AttrDelete(vdimname, 'Country Name EN');
+AttrInsert(vdimname, '', 'Country Name EN', 'A');
+
+
+DimensionSortOrder(vdimname, 'ByInput', 'Ascending', 'ByInput', 'Ascending');
+
+#endregion
+#region Metadata
+
+vdimname = 'DIM_Country';
+vtotal = 'Total Country';
+
+# Insertion des éléments consolidés et des éléments fins
+DimensionElementInsert(vdimname, '', COD_COUNTRY_ERPK, 'N');
+DimensionElementInsert(vdimname, '', COD_REGROUP, 'C');
+DimensionElementInsert(vdimname, '', vtotal, 'C');
+
+# Lien entre les parents et les enfants
+DimensionElementComponentAdd(vdimname, vtotal, COD_REGROUP, 1);
+DimensionElementComponentAdd(vdimname, COD_REGROUP, COD_COUNTRY_ERPK, 1);
+
+#endregion
+#region Data
+
+# Affectation des attributs
+
+if(dimix(vdimname, lab_country_fr) <> 0);
+   libelement = COD_COUNTRY_ERPK | ' - ' | LAB_COUNTRY_FR;
+else;
+   libelement = LAB_COUNTRY_FR;
+endif;
+
+AttrPutS(libelement, vdimname, COD_COUNTRY_ERPK, 'Country Name FR');
+
+
+if(dimix(vdimname, lab_country_en) <> 0);
+   libelement = COD_COUNTRY_ERPK | ' - ' | LAB_COUNTRY_EN;
+else;
+   libelement = LAB_COUNTRY_EN;
+endif;
+
+AttrPutS(libelement, vdimname, COD_COUNTRY_ERPK, 'Country Name EN');
+
+AttrPutS(COD_ISO_COUNTRY, vdimname, COD_COUNTRY_ERPK, 'Country Code');
+
+#endregion
+#region Epilog
+
+sTmpName = 'Niveau_0';
+sDimName = 'DIM_Country';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble Niveau 0
+SubsetCreate( sDimName, sTmpName);
+
+i = 1;
+j = 1;
+
+n = DIMSIZ( sDimName);
+while( i <= n) ;
+  sElt = DIMNM( sDimName, i);
+  if( ELLEV( sDimName, sElt) = 0) ;
+    SubsetElementInsert( sDimName, sTmpName, sElt, j);
+    j = j + 1;
+  endif;
+  i = i + 1;
+end;
+
+#endregion

@@ -1,0 +1,137 @@
+#region Prolog
+
+# Création des variables
+sTmpName = 'FTM_DATA_SAVING_LEDGER' | TIMST( Now(), '\i\s') | NumberToString( int( 10000000 * (rand() + (rand() \ rand()))));
+sCubeName = 'FTM_DATA_SAVING_LEDGER';
+
+
+## Dimension Actuality #############################################
+sDimName = 'Actuality';
+vannee_encours =cellgets ('PARAMETRES_CHARGEMENT','Année_encours','Valeur');
+vannee_encours_numerique= stringtonumber(vannee_encours);
+vmois_encours = cellgets ('PARAMETRES_CHARGEMENT','Mois_encours','Valeur');
+vmois_encours_numerique = stringtonumber(vmois_encours);
+
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+SubsetCreate( sDimName, sTmpName);
+
+vannee_precedente_numerique=vannee_encours_numerique - 1;
+vannee_precedente= numbertostring(vannee_precedente_numerique);
+if(vmois_encours_numerique < 7);
+        SubsetElementInsert( sDimName, sTmpName, 'AC'|vannee_precedente, 1);
+endif;
+SubsetElementInsert( sDimName, sTmpName, 'AC'|vannee_encours, 1);
+
+## 
+
+## Dimension Month ###############################################
+sDimName = 'Month';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+SubsetCreate( sDimName, sTmpName);
+
+  i = 1;
+
+  n = DIMSIZ( sDimName);
+  while( i <= n) ;
+    sElt = DIMNM( sDimName, i);
+    if( ELLEV( sDimName, sElt) = 0) ;
+        SubsetElementInsert( sDimName, sTmpName, sElt, 1);
+    endif;
+    i = i + 1;
+  end;
+
+## Dimension DIM_Book ###############################################
+sDimName = 'DIM_Book';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+SubsetCreate( sDimName, sTmpName);
+
+  i = 1;
+
+  n = DIMSIZ( sDimName);
+  while( i <= n) ;
+    sElt = DIMNM( sDimName, i);
+    if( ELLEV( sDimName, sElt) = 0) ;
+        SubsetElementInsert( sDimName, sTmpName, sElt, 1);
+    endif;
+    i = i + 1;
+  end;
+
+
+## Dimension Amount_Margin ############################
+sDimName = 'Amount_Saving_Ledger';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 0);
+  SubsetCreate( sDimName, sTmpName);
+endif;
+
+SubsetElementInsert( sDimName, sTmpName, 'Débit', 1);
+SubsetElementInsert( sDimName, sTmpName, 'Crédit', 1);
+
+
+## Création de la vue ######################################
+ViewCreate( sCubeName, sTmpName);
+
+## Affectation des dimensions à la vue
+ViewSubsetAssign( sCubeName, sTmpName, 'Actuality', sTmpName);
+ViewSubsetAssign( sCubeName, sTmpName, 'Month', sTmpName);
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Book', sTmpName);
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Origin_Company', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Allocation', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Customer_Supplier', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'Amount_Saving_Ledger', sTmpName);
+
+
+## Remise à zéro de la vue du cube
+ViewZeroOut(sCubeName, sTmpName);
+
+#endregion
+#region Data
+
+if(stringtonumber(mois) < 10);
+ mois = '0'|mois;
+endif;
+
+
+if(montant >= 0);
+ cellputn(montant, sCubeName, mois, cod_company, book, 'AC'|annee, 'C-'|cod_accounting_account, id_allocation, cod_customer, 'Débit'); 
+else;
+ cellputn(montant, sCubeName, mois, cod_company, book, 'AC'|annee, 'C-'|cod_accounting_account, id_allocation, cod_customer, 'Crédit'); 
+endif;
+
+#endregion
+#region Epilog
+
+## Suppression de la vue du Cube (à faire en premier sinon la suppression des sous-ensembles est impossible)
+viewdestroy(sCubeName, sTmpName);
+
+## Suppression des sous-ensembles
+SubsetDestroy('Actuality', sTmpName);
+SubsetDestroy('Month', sTmpName);
+SubsetDestroy('DIM_Book', sTmpName);
+SubsetDestroy('Amount_Saving_Ledger', sTmpName);
+
+#endregion

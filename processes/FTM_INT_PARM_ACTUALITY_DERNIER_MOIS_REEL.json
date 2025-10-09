@@ -1,0 +1,30 @@
+{
+	"@type":"Process",
+	"Name":"FTM_INT_PARM_ACTUALITY_DERNIER_MOIS_REEL",
+	"HasSecurityAccess":false,
+	"Code@Code.link":"FTM_INT_PARM_ACTUALITY_DERNIER_MOIS_REEL.ti",
+	"DataSource":
+	{
+		"Type":"ODBC",
+		"dataSourceNameForServer":"DWH_PROD",
+		"dataSourceNameForClient":"DWH_PROD",
+		"userName":"admin_DWH",
+		"password":"",
+		"query":"select month(dateadd(month, -1, getdate())) as der_mois"
+	},
+	"Parameters":[],
+	"Variables":
+	[
+		{
+			"Name":"der_mois",
+			"Type":"String",
+			"Position":1,
+			"StartByte":0,
+			"EndByte":0
+		}
+	],
+	"UIData": "_ParameterConstraints=e30=\f",
+	"VariablesUIData": [
+		"VarType=32\fColType=827\f"
+	]
+}

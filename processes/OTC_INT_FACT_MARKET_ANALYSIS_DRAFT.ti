@@ -1,0 +1,172 @@
+#region Prolog
+
+# Création des variables
+sTmpName = 'OTC_DATA_MARKET_ANALYSIS_DRAFT' | TIMST( Now(), '\i\s') | NumberToString( int( 10000000 * (rand() + (rand() \ rand()))));
+sCubeName = 'OTC_DATA_MARKET_ANALYSIS_DRAFT';
+
+## Dimension Currency #############################################
+sDimName = 'Currency';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 0);
+  SubsetCreate( sDimName, sTmpName);
+endif;
+        SubsetElementInsert( sDimName, sTmpName, 'CD_LC', 1);
+
+
+## Dimension Market_Actor #############################################
+sDimName = 'Market_Actor';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 0);
+  SubsetCreate( sDimName, sTmpName);
+endif;
+        SubsetElementInsert( sDimName, sTmpName, 'KUHN_Market', 1);
+
+
+## Dimension Actuality #############################################
+sDimName = 'Actuality';
+vannee_encours =cellgets ('PARAMETRES_CHARGEMENT','Année_encours','Valeur');
+vannee_encours_numerique= stringtonumber(vannee_encours);
+
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 0);
+  SubsetCreate( sDimName, sTmpName);
+endif;
+
+        vannee_precedente_numerique=vannee_encours_numerique - 1;
+        vannee_precedente= numbertostring(vannee_precedente_numerique);
+        vannee_precedente_numerique=vannee_encours_numerique - 1;
+        vannee_precedente= numbertostring(vannee_precedente_numerique);
+        SubsetElementInsert( sDimName, sTmpName, 'AC'|vannee_precedente, 1);
+        SubsetElementInsert( sDimName, sTmpName, 'AC'|vannee_encours, 1);
+
+## Dimension Amount_Market_Analysis ############################
+sDimName = 'Amount_Market_Analysis';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 0);
+  SubsetCreate( sDimName, sTmpName);
+endif;
+
+        SubsetElementInsert( sDimName, sTmpName, 'QTY', 1);
+        SubsetElementInsert( sDimName, sTmpName, 'Unit.Price', 1);
+        SubsetElementInsert( sDimName, sTmpName, 'SALES', 1);
+        
+
+
+## Création de la vue ######################################
+ViewCreate( sCubeName, sTmpName);
+
+## Affectation des dimensions à la vue
+ViewSubsetAssign( sCubeName, sTmpName, 'Currency', sTmpName);
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Prev_IC_mapping', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'Market_Actor', sTmpName);
+ViewSubsetAssign( sCubeName, sTmpName, 'Actuality', sTmpName);
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Origin_Company', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Country', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'Configuration_Draft', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'Amount_Market_Analysis', sTmpName);
+
+
+## Remise à zéro de la vue du cube
+ViewZeroOut(sCubeName, sTmpName);
+
+#endregion
+#region Data
+
+# valeur du libellé du modèle
+v_product_model_fr = 'M -'| product_model  |' - '|  product_model_fr  |  '- FR';
+
+sDimName = 'Configuration_Draft';
+
+ix_model = DIMIX( sDimName, v_product_model_fr);
+if ( ix_model = 0 );
+   v_product_model_fr = 'M -MD-NA - MD-NA- FR';
+    ix_model = DIMIX( sDimName, v_product_model_fr);
+   
+endif;
+sk_model = DIMNM( sDimName, ix_model); 
+
+##############
+# recherche du pays
+sDimName = 'DIM_Allocation';
+v_attrs = ATTRS( sDimName, id_allocation, 'SK_Country');
+
+# Particulartité Brexit
+if(origin_company @= 'A' & num_year @<= '2020');
+   v_attrs = 'C-111';
+endif;
+
+sDimname = 'DIM_Country';
+ix_country = DIMIX( sDimname, v_attrs); 
+sk_country = DIMNM( sDimName, ix_country);
+
+###################
+# recherche du groupement
+sDimName = 'DIM_Customer_Supplier';
+v_attrs = ATTRS( sDimName, cod_customer, 'Group');
+
+sDimname = 'DIM_Prev_IC_mapping';
+ix_Prev_IC_mapping = DIMIX( sDimname, v_attrs); 
+sk_Groupement = DIMNM( sDimName, ix_Prev_IC_mapping);
+
+# récupération du CA précédent
+vSalesPrec = 0;
+vSalesPrec = cellgetn('OTC_DATA_MARKET_ANALYSIS_DRAFT', 'CD_LC', sk_Groupement, 'KUHN_Market', 'AC'|num_year, origin_company, sk_country, v_product_model_fr, 'SALES');
+
+# récupération de la quantité précédente
+vQtePrec = 0;
+vQteNew = 0;
+vQtePrec = cellgetn('OTC_DATA_MARKET_ANALYSIS_DRAFT', 'CD_LC', sk_Groupement, 'KUHN_Market', 'AC'|num_year, origin_company, sk_country, v_product_model_fr, 'QTY');
+
+# calcul de la nouvelle quantité
+vQteNew = vQtePrec + QUANTITY;
+cellputn(vQteNew, 'OTC_DATA_MARKET_ANALYSIS_DRAFT', 'CD_LC', sk_Groupement, 'KUHN_Market', 'AC'|num_year, origin_company, sk_country, v_product_model_fr, 'QTY');
+
+#calcul du nouveau prix unitaire
+if ( vQteNew  = 0);
+  v_UnitPrice = vSalesPrec + NET_SALES_EUROS;
+else;
+  v_UnitPrice = ( vSalesPrec + NET_SALES_EUROS )  / vQteNew;
+endif;
+
+cellputn(v_UnitPrice, 'OTC_DATA_MARKET_ANALYSIS_DRAFT', 'CD_LC',sk_Groupement, 'KUHN_Market', 'AC'|num_year, origin_company, sk_country, v_product_model_fr, 'Unit.Price');
+
+v_SalesNew = vSalesPrec + NET_SALES_EUROS;
+cellputn(v_SalesNew, 'OTC_DATA_MARKET_ANALYSIS_DRAFT', 'CD_LC',sk_Groupement, 'KUHN_Market', 'AC'|num_year, origin_company, sk_country, v_product_model_fr,  'SALES');
+
+#endregion
+#region Epilog
+
+## Suppression de la vue du Cube (à faire en premier sinon la suppression des sous-ensembles est impossible)
+viewdestroy(sCubeName, sTmpName);
+
+## Suppression des sous-ensembles
+SubsetDestroy('Currency', sTmpName);
+SubsetDestroy('Market_Actor', sTmpName);
+SubsetDestroy('Actuality', sTmpName);
+SubsetDestroy('Amount_Market_Analysis', sTmpName);
+
+#endregion

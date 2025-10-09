@@ -1,0 +1,38 @@
+{
+	"@type":"Process",
+	"Name":"SECU_INT_FACT_Allocation_Origin_Company",
+	"HasSecurityAccess":false,
+	"Code@Code.link":"SECU_INT_FACT_Allocation_Origin_Company.ti",
+	"DataSource":
+	{
+		"Type":"ODBC",
+		"dataSourceNameForServer":"DWH_PROD",
+		"dataSourceNameForClient":"DWH_PROD",
+		"userName":"admin_DWH",
+		"password":"",
+		"query":"begin\r\nSELECT \r\nDA.ID_ALLOCATION,\r\nDC.COD_COMPANY \r\nFROM common.DIM_ALLOCATION DA\r\nleft outer JOIN common.DIM_COMPANY DC on substring(ID_ALLOCATION,1,1) = DC.COD_COMPANY\r\nwhere id_allocation not like 'null%'\r\nand cod_company <> ''\r\nend"
+	},
+	"Parameters":[],
+	"Variables":
+	[
+		{
+			"Name":"ID_ALLOCATION",
+			"Type":"String",
+			"Position":1,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"COD_COMPANY",
+			"Type":"String",
+			"Position":2,
+			"StartByte":0,
+			"EndByte":0
+		}
+	],
+	"UIData": "_ParameterConstraints=e30=\f",
+	"VariablesUIData": [
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f"
+	]
+}
