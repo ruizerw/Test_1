@@ -64,15 +64,5 @@
 			"StartByte":0,
 			"EndByte":0
 		}
-	],
-	"UIData": "_ParameterConstraints=e30=\f",
-	"VariablesUIData": [
-		"VarType=32\fColType=827\f",
-		"VarType=32\fColType=827\f",
-		"VarType=32\fColType=827\f",
-		"VarType=32\fColType=827\f",
-		"VarType=32\fColType=827\f",
-		"VarType=32\fColType=827\f",
-		"VarType=32\fColType=827\f"
 	]
 }
