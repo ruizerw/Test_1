@@ -1,0 +1,137 @@
+#region Prolog
+
+# Création des variables
+sTmpName = 'FTM_DATA_BALANCE_SHEET' | TIMST( Now(), '\i\s') | NumberToString( int( 10000000 * (rand() + (rand() \ rand()))));
+sTmpName1 = 'FTM_DATA_BALANCE_SHEET_AA-1' | TIMST( Now(), '\i\s') | NumberToString( int( 10000000 * (rand() + (rand() \ rand()))));
+sCubeName = 'FTM_DATA_BALANCE_SHEET';
+
+
+
+## Dimension Month ###############################################
+sDimName = 'Month';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+SubsetCreate( sDimName, sTmpName);
+
+  i = 1;
+
+  n = DIMSIZ( sDimName);
+  while( i <= n) ;
+    sElt = DIMNM( sDimName, i);
+    if( ELLEV( sDimName, sElt) = 0) ;
+        SubsetElementInsert( sDimName, sTmpName, sElt, 1);
+    endif;
+    i = i + 1;
+  end;
+
+
+
+## Dimension Actuality #############################################
+sDimName = 'Actuality';
+
+vannee_encours = cellgets ('PARAMETRES_CHARGEMENT','Année_encours','Valeur');
+vmois_encours = cellgets ('PARAMETRES_CHARGEMENT','Mois_encours','Valeur');
+vannee_encours_numerique = stringtonumber(vannee_encours);
+vmois_encours_numerique = stringtonumber(vmois_encours);
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+SubsetCreate( sDimName, sTmpName);
+
+
+vannee_precedente_numerique=vannee_encours_numerique - 1;
+vannee_precedente= numbertostring(vannee_precedente_numerique);
+if(vmois_encours_numerique < 7);
+        SubsetElementInsert( sDimName, sTmpName, 'AC'|vannee_precedente, 1);
+endif;
+SubsetElementInsert( sDimName, sTmpName, 'AC'|vannee_encours, 1);
+
+
+
+## Dimension Prev_IC_mapping ####################################
+sDimName = 'DIM_Prev_IC_mapping';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+SubsetCreate( sDimName, sTmpName);
+
+  i = 1;
+
+  n = DIMSIZ( sDimName);
+  while( i <= n) ;
+    sElt = DIMNM( sDimName, i);
+    if( ELLEV( sDimName, sElt) = 0) ;
+        SubsetElementInsert( sDimName, sTmpName, sElt, 1);
+    endif;
+    i = i + 1;
+  end;
+
+
+
+## Dimension Amount_Balance_Sheet ############################
+sDimName = 'Amount_Prev_Balance_Sheet';
+
+# Suppression du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 1) ;
+  SubsetDestroy( sDimName, sTmpName);
+endif;
+
+# Creation du sous-ensemble temporaire
+if( SubsetExists( sDimName, sTmpName) = 0);
+  SubsetCreate( sDimName, sTmpName);
+endif;
+
+
+SubsetElementInsert( sDimName, sTmpName, 'proposal', 1);
+
+## Création de la vue ######################################
+ViewCreate( sCubeName, sTmpName);
+
+## Affectation des dimensions à la vue
+ViewSubsetAssign( sCubeName, sTmpName, 'Actuality', sTmpName);
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Origin_Company', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Prev_IC_mapping', sTmpName);
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Configuration', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Chart_of_Account', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'DIM_Allocation', 'Niveau_0');
+ViewSubsetAssign( sCubeName, sTmpName, 'Amount_Prev_Balance_Sheet', sTmpName);
+
+
+## Remise à zéro de la vue du cube
+ViewZeroOut(sCubeName, sTmpName);
+
+#endregion
+#region Data
+
+cellputn(NET_ENTRY_EUROS, 'FTM_DATA_BALANCE_SHEET', PREV_IC_MAPPING, NUM_MONTH, 'AC'|NUM_YEAR, ORIGIN_COMPANY, PRODUCT_MODEL, COD_ACC_ACCOUNT, ID_ALLOCATION, 'proposal');
+
+
+#endregion
+#region Epilog
+
+## Suppression de la vue du Cube (à faire en premier sinon la suppression des sous-ensembles est impossible)
+viewdestroy(sCubeName, sTmpName);
+
+## Suppression des sous-ensembles
+SubsetDestroy('Actuality', sTmpName);
+SubsetDestroy('DIM_Origin_Company', sTmpName);
+SubsetDestroy('DIM_Prev_IC_mapping', sTmpName);
+SubsetDestroy('DIM_Configuration', sTmpName);
+SubsetDestroy('DIM_Chart_of_Account', sTmpName);
+SubsetDestroy('DIM_Allocation', sTmpName);
+SubsetDestroy('Amount_Prev_Balance_Sheet', sTmpName);
+
+#endregion
