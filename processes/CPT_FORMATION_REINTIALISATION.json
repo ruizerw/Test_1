@@ -1,0 +1,50 @@
+{
+	"@type":"Process",
+	"Name":"CPT_FORMATION_REINTIALISATION",
+	"HasSecurityAccess":true,
+	"Code@Code.link":"CPT_FORMATION_REINTIALISATION.ti",
+	"UIData":"_ParameterConstraints=e30=\f",
+	"VariablesUIData":
+	[
+		"VarType=32\fColType=827\f",
+		"VarType=32\fColType=827\f"
+	],
+	"DataSource":
+	{
+		"Type":"ASCII",
+		"asciiDecimalSeparator":",",
+		"asciiDelimiterChar":" ",
+		"asciiDelimiterType":"Character",
+		"asciiHeaderRecords":1,
+		"asciiQuoteCharacter":"\"",
+		"asciiThousandSeparator":" ",
+		"dataSourceNameForClient":"model_upload\\comptes_formation.txt",
+		"dataSourceNameForServer":"model_upload\\comptes_formation.txt"
+	},
+	"Parameters":
+	[
+		{
+			"Name":"pValidation",
+			"Prompt":"Êtes-vous sûr de vouloir réinitialiser les mdps des comptes de formation ? (Format Oui ou Non)",
+			"Value":"Non",
+			"Type":"String"
+		}
+	],
+	"Variables":
+	[
+		{
+			"Name":"vCompte",
+			"Type":"String",
+			"Position":1,
+			"StartByte":0,
+			"EndByte":0
+		},
+		{
+			"Name":"vMDP",
+			"Type":"String",
+			"Position":2,
+			"StartByte":0,
+			"EndByte":0
+		}
+	]
+}

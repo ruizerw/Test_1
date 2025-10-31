@@ -1,0 +1,43 @@
+{
+	"@type":"Subset",
+	"Name":"Mois niveau 0",
+	"Elements":
+	[
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('Jan')"
+		},
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('Feb')"
+		},
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('Mar')"
+		},
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('Apr')"
+		},
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('May')"
+		},
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('Jun')"
+		},
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('Jul')"
+		},
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('Aug')"
+		},
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('Sep')"
+		},
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('Oct')"
+		},
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('Nov')"
+		},
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('Dec')"
+		}
+	]
+}

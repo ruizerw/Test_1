@@ -1,0 +1,12 @@
+{
+	"@type":"Dimension",
+	"Name":"CPT_FORMATION_PARAMETRES",
+	"Hierarchies@Code.links":
+	[
+		"CPT_FORMATION_PARAMETRES.hierarchies/CPT_FORMATION_PARAMETRES.json"
+	],
+	"DefaultHierarchy":
+	{
+		"@id":"Dimensions('CPT_FORMATION_PARAMETRES')/Hierarchies('CPT_FORMATION_PARAMETRES')"
+	}
+}

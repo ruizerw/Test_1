@@ -1,0 +1,39 @@
+{
+	"@type":"MDXView",
+	"Name":"Net Profit",
+	"MDX@Code.link":"Net Profit.mdx",
+	"Meta" : 
+	{
+		"Aliases" : 
+		{
+			"[Account].[Account]" : "MEMBER_NAME",
+			"[Version].[Version]" : "Caption_Default",
+			"[Year].[Year]" : "Caption_Default",
+			"[organization].[organization]" : "Caption"
+		},
+		"ContextSets" : 
+		{
+			"[Account].[Account]" : 
+			{
+				"Expression" : "{{[Account].[Account].MEMBERS}}"
+			},
+			"[Currency Calc].[Currency Calc]" : 
+			{
+				"Expression" : "{[Currency Calc].[Currency Calc].MEMBERS}"
+			},
+			"[Month].[Month]" : 
+			{
+				"Expression" : "{[Month].[Month].MEMBERS}"
+			}
+		},
+		"ExpandAboves" : 
+		{
+			"[Account].[Account]" : false,
+			"[Currency Calc].[Currency Calc]" : false,
+			"[Month].[Month]" : false,
+			"[Version].[Version]" : false,
+			"[Year].[Year]" : false,
+			"[organization].[organization]" : false
+		}
+	}
+}

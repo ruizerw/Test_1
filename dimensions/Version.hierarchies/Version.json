@@ -1,0 +1,96 @@
+{
+	"@type":"Hierarchy",
+	"Name":"Version",
+	"Elements":
+	[
+		{
+			"Name":"Version 1",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Version 2",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Variance",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Variance%",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Explanation",
+			"Type":"String"
+		},
+		{
+			"Name":"Performance Variance",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Ccy Exchange Variance",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Dashboard",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"DashboardCA",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Actual",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Forecast",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Target",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Prior Year Actual",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Target vs Prior Year Actual",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Target vs Prior Year Actual %",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Rate Variance",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Volume Variance",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Zero",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Predictive",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Predictivev2",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Budget approved",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Mid Term Plan",
+			"Type":"Numeric"
+		}
+	],
+	"Subsets@Code.links":[]
+}

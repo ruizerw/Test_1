@@ -1,0 +1,17 @@
+{
+	"@type":"Subset",
+	"Name":"Premier trimestre",
+	"Alias":"mois",
+	"Elements":
+	[
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('Jan')"
+		},
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('Feb')"
+		},
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('Mar')"
+		}
+	]
+}

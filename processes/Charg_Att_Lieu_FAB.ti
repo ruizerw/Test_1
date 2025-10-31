@@ -1,0 +1,25 @@
+#region Prolog
+#****Begin: Generated Statements***
+#****End: Generated Statements****
+
+AttrInsert( 'Dim_Produit', '', 'Lieu de Fab', 'S' );
+AttrInsert( 'Dim_Magasin', '', 'TVA', 'N' );
+#endregion
+#region Metadata
+#****Begin: Generated Statements***
+#****End: Generated Statements****
+
+#endregion
+#region Data
+#****Begin: Generated Statements***
+#****End: Generated Statements****
+
+AttrPutS( V_Pays, 'Dim_Produit', V_Produit , 'Lieu de Fab' );
+
+
+
+#endregion
+#region Epilog
+#****Begin: Generated Statements***
+#****End: Generated Statements****
+#endregion

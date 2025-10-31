@@ -1,0 +1,32 @@
+{
+	"@type":"Cube",
+	"Name":"SalesCube_metrics",
+	"Dimensions":
+	[
+		{
+			"@id":"Dimensions('model')"
+		},
+		{
+			"@id":"Dimensions('region')"
+		},
+		{
+			"@id":"Dimensions('month')"
+		},
+		{
+			"@id":"Dimensions('account1_metrics')"
+		},
+		{
+			"@id":"Dimensions('actvsbud_MI')"
+		}
+	],
+	"Rules@Code.link":"SalesCube_metrics.rules",
+	"MeasuresDimension":
+	{
+		"@id":"Dimensions('actvsbud_MI')"
+	},
+	"Views@Code.links":
+	[
+		"SalesCube_metrics.views/All.json",
+		"SalesCube_metrics.views/SalesCube_metrics.json"
+	]
+}

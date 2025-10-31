@@ -1,0 +1,43 @@
+{
+	"@type":"MDXView",
+	"Name":"Net Profit - Workspace - Graphique - Maxime",
+	"MDX@Code.link":"Net Profit - Workspace - Graphique - Maxime.mdx",
+	"Meta" : 
+	{
+		"Aliases" : 
+		{
+			"[Account].[Account]" : "Caption_Default",
+			"[Version].[Version]" : "Caption_Default",
+			"[Year].[Year]" : "Caption_Default",
+			"[organization].[organization]" : "Caption_Base"
+		},
+		"ContextSets" : 
+		{
+			"[Account].[Account]" : 
+			{
+				"Expression" : "{[Account].[Account].[NP]}"
+			},
+			"[Currency Calc].[Currency Calc]" : 
+			{
+				"Expression" : "{[Currency Calc].[Currency Calc].MEMBERS}"
+			},
+			"[Version].[Version]" : 
+			{
+				"Expression" : "{[Version].[Version].[Version 1],[Version].[Version].[Actual]}"
+			},
+			"[Year].[Year]" : 
+			{
+				"Expression" : "{[Year].[Year].[Y2]}"
+			}
+		},
+		"ExpandAboves" : 
+		{
+			"[Account].[Account]" : true,
+			"[Currency Calc].[Currency Calc]" : false,
+			"[Version].[Version]" : false,
+			"[Year].[Year]" : false,
+			"[month].[month]" : false,
+			"[organization].[organization]" : false
+		}
+	}
+}

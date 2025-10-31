@@ -1,0 +1,5 @@
+{
+	"@type":"Subset",
+	"Name":"MDX_Level0",
+	"Expression":"{TM1FILTERBYLEVEL( {TM1SUBSETALL( [month] )}, 1)}"
+}

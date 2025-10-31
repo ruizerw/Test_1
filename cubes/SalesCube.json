@@ -1,0 +1,39 @@
+{
+	"@type":"Cube",
+	"Name":"SalesCube",
+	"Dimensions":
+	[
+		{
+			"@id":"Dimensions('actvsbud')"
+		},
+		{
+			"@id":"Dimensions('region')"
+		},
+		{
+			"@id":"Dimensions('model')"
+		},
+		{
+			"@id":"Dimensions('account1')"
+		},
+		{
+			"@id":"Dimensions('month')"
+		}
+	],
+	"Rules@Code.link":"SalesCube.rules",
+	"Views@Code.links":
+	[
+		"SalesCube.views/All.json",
+		"SalesCube.views/Default.json",
+		"SalesCube.views/filter.json",
+		"SalesCube.views/Nav_3.json",
+		"SalesCube.views/Price.json",
+		"SalesCube.views/Region.json",
+		"SalesCube.views/Repartition proportionnelle.json",
+		"SalesCube.views/Répartition proportionnelle.json",
+		"SalesCube.views/sales1qtr.json",
+		"SalesCube.views/salesmargin%.json",
+		"SalesCube.views/salesprice.json",
+		"SalesCube.views/Trace_complex.json",
+		"SalesCube.views/Trace_simple.json"
+	]
+}

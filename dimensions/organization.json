@@ -1,0 +1,15 @@
+{
+	"@type":"Dimension",
+	"Name":"organization",
+	"AllLeavesHierarchyName":"Leaves",
+	"Hierarchies@Code.links":
+	[
+		"organization.hierarchies/organization.json",
+		"organization.hierarchies/Currency.json",
+		"organization.hierarchies/Default Plant.json"
+	],
+	"DefaultHierarchy":
+	{
+		"@id":"Dimensions('organization')/Hierarchies('organization')"
+	}
+}

@@ -1,0 +1,36 @@
+{
+	"@type":"Cube",
+	"Name":"Income Statement",
+	"Dimensions":
+	[
+		{
+			"@id":"Dimensions('Currency Calc')"
+		},
+		{
+			"@id":"Dimensions('organization')"
+		},
+		{
+			"@id":"Dimensions('Year')"
+		},
+		{
+			"@id":"Dimensions('month')"
+		},
+		{
+			"@id":"Dimensions('Account')"
+		},
+		{
+			"@id":"Dimensions('Version')"
+		}
+	],
+	"Views@Code.links":
+	[
+		"Income Statement.views/Détail compte - Mensuel.json",
+		"Income Statement.views/Feuil1.json",
+		"Income Statement.views/Net Profit.json",
+		"Income Statement.views/Net Profit - Workspace - Graphique - Maxime.json",
+		"Income Statement.views/net profit2.json",
+		"Income Statement.views/Net Profit_1.json",
+		"Income Statement.views/TEST.json",
+		"Income Statement.views/TEST_Vue.json"
+	]
+}

@@ -1,0 +1,6 @@
+{
+	"@type":"Subset",
+	"Name":"01 - Formation",
+	"Alias":"Caption_Default",
+	"Expression":"{[Year].[Year].MEMBERS}"
+}

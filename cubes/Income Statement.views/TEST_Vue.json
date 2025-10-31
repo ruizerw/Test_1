@@ -1,0 +1,37 @@
+{
+	"@type":"MDXView",
+	"Name":"TEST_Vue",
+	"MDX@Code.link":"TEST_Vue.mdx",
+	"Meta" : 
+	{
+		"Aliases" : {},
+		"ContextSets" : 
+		{
+			"[Currency Calc].[Currency Calc]" : 
+			{
+				"Expression" : "{[Currency Calc].[Currency Calc].MEMBERS}"
+			},
+			"[Month].[Month]" : 
+			{
+				"Expression" : "{[Month].[Month].MEMBERS}"
+			},
+			"[Year].[Year]" : 
+			{
+				"Expression" : "{[Year].[Year].MEMBERS}"
+			},
+			"[organization].[organization]" : 
+			{
+				"Expression" : "{[organization].[organization].MEMBERS}"
+			}
+		},
+		"ExpandAboves" : 
+		{
+			"[Account].[Account]" : false,
+			"[Currency Calc].[Currency Calc]" : false,
+			"[Month].[Month]" : false,
+			"[Version].[Version]" : false,
+			"[Year].[Year]" : false,
+			"[organization].[organization]" : false
+		}
+	}
+}

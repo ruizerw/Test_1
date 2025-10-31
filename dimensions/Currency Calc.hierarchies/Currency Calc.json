@@ -1,0 +1,82 @@
+{
+	"@type":"Hierarchy",
+	"Name":"Currency Calc",
+	"Elements":
+	[
+		{
+			"Name":"Local",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Adjustments",
+			"Type":"Consolidated"
+		},
+		{
+			"Name":"Adjustment 1",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Adjustment 2",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Adjustment 3",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Adjustement 4",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Intercompany Elim",
+			"Type":"Numeric"
+		},
+		{
+			"Name":"Contribution",
+			"Type":"Consolidated"
+		},
+		{
+			"Name":"Base",
+			"Type":"Numeric"
+		}
+	],
+	"Edges":
+	[
+		{
+			"ParentName":"Adjustments",
+			"ComponentName":"Adjustment 1",
+			"Weight":1
+		},
+		{
+			"ParentName":"Adjustments",
+			"ComponentName":"Adjustment 2",
+			"Weight":1
+		},
+		{
+			"ParentName":"Adjustments",
+			"ComponentName":"Adjustment 3",
+			"Weight":1
+		},
+		{
+			"ParentName":"Adjustments",
+			"ComponentName":"Adjustement 4",
+			"Weight":1
+		},
+		{
+			"ParentName":"Contribution",
+			"ComponentName":"Adjustments",
+			"Weight":1
+		},
+		{
+			"ParentName":"Contribution",
+			"ComponentName":"Intercompany Elim",
+			"Weight":1
+		},
+		{
+			"ParentName":"Contribution",
+			"ComponentName":"Base",
+			"Weight":1
+		}
+	],
+	"Subsets@Code.links":[]
+}

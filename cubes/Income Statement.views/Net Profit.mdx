@@ -1,0 +1,1 @@
+SELECT {[Version].[Version].[Actual],[Version].[Version].[Version 1]}*{[Year].[Year].[Y1],[Year].[Year].[Y2]} ON 0, {{DISTINCT({DESCENDANTS([organization].[organization].[Total Company])})}} ON 1 FROM [Income Statement] WHERE ([Currency Calc].[Currency Calc].[Local], [Account].[Account].[Statistics], [Month].[Month].[Year])

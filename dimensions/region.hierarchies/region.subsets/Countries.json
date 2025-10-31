@@ -1,0 +1,6 @@
+{
+	"@type":"Subset",
+	"Name":"Countries",
+	"Alias":"MEMBER_NAME",
+	"Expression":"{[region].[region].[World],TM1FILTERBYLEVEL(TM1SUBSETALL([region].[region]) , 0)}"
+}

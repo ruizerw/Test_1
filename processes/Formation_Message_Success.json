@@ -1,0 +1,21 @@
+{
+	"@type":"Process",
+	"Name":"Formation_Message_Success",
+	"HasSecurityAccess":true,
+	"Code@Code.link":"Formation_Message_Success.ti",
+	"UIData":"_ParameterConstraints=e30=\f",
+	"DataSource":
+	{
+		"Type":"None"
+	},
+	"Parameters":
+	[
+		{
+			"Name":"P_Success",
+			"Prompt":"",
+			"Value":"Oui",
+			"Type":"String"
+		}
+	],
+	"Variables":[]
+}

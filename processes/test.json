@@ -1,0 +1,20 @@
+{
+	"@type":"Process",
+	"Name":"test",
+	"HasSecurityAccess":true,
+	"UIData":"_ParameterConstraints=e30=\f",
+	"DataSource":
+	{
+		"Type":"None"
+	},
+	"Parameters":
+	[
+		{
+			"Name":"P_ANNEE",
+			"Prompt":"",
+			"Value":"",
+			"Type":"String"
+		}
+	],
+	"Variables":[]
+}

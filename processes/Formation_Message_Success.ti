@@ -1,0 +1,5 @@
+#region Prolog
+IF(P_Success @<> 'Oui');
+    CellGetN( 'Cube' );
+ENDIF; 
+#endregion

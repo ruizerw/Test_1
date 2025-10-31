@@ -1,0 +1,31 @@
+{
+	"@type":"Subset",
+	"Name":"Selection model",
+	"Elements":
+	[
+		{
+			"@id":"Dimensions('model')/Hierarchies('model')/Elements('L Series 1.8 L Wagon')"
+		},
+		{
+			"@id":"Dimensions('model')/Hierarchies('model')/Elements('L Series 2.0 L Wagon')"
+		},
+		{
+			"@id":"Dimensions('model')/Hierarchies('model')/Elements('L Series 1.8 L Wagon 4WD')"
+		},
+		{
+			"@id":"Dimensions('model')/Hierarchies('model')/Elements('L Series 2.0 L Wagon 4WD')"
+		},
+		{
+			"@id":"Dimensions('model')/Hierarchies('model')/Elements('T Series 2.8 L Sedan')"
+		},
+		{
+			"@id":"Dimensions('model')/Hierarchies('model')/Elements('T Series 3.2 L Sedan')"
+		},
+		{
+			"@id":"Dimensions('model')/Hierarchies('model')/Elements('T Series 4.0 L Sedan')"
+		},
+		{
+			"@id":"Dimensions('model')/Hierarchies('model')/Elements('T Series 5.0 L Sedan')"
+		}
+	]
+}

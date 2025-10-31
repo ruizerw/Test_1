@@ -1,0 +1,13 @@
+{
+	"@type":"Process",
+	"Name":"zCreation_Hierarchie",
+	"HasSecurityAccess":true,
+	"Code@Code.link":"zCreation_Hierarchie.ti",
+	"UIData":"_ParameterConstraints=e30=\f",
+	"DataSource":
+	{
+		"Type":"None"
+	},
+	"Parameters":[],
+	"Variables":[]
+}

@@ -1,0 +1,25 @@
+{
+	"@type":"Subset",
+	"Name":"Agencement des mois",
+	"Elements":
+	[
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('Jun')"
+		},
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('Jan')"
+		},
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('Feb')"
+		},
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('Mar')"
+		},
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('Apr')"
+		},
+		{
+			"@id":"Dimensions('month')/Hierarchies('month')/Elements('May')"
+		}
+	]
+}

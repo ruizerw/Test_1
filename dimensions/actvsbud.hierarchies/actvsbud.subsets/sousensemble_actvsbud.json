@@ -1,0 +1,17 @@
+{
+	"@type":"Subset",
+	"Name":"sousensemble_actvsbud",
+	"Alias":"Caption",
+	"Elements":
+	[
+		{
+			"@id":"Dimensions('actvsbud')/Hierarchies('actvsbud')/Elements('Variance')"
+		},
+		{
+			"@id":"Dimensions('actvsbud')/Hierarchies('actvsbud')/Elements('Actual')"
+		},
+		{
+			"@id":"Dimensions('actvsbud')/Hierarchies('actvsbud')/Elements('Budget')"
+		}
+	]
+}

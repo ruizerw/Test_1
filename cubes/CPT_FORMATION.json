@@ -1,0 +1,14 @@
+{
+	"@type":"Cube",
+	"Name":"CPT_FORMATION",
+	"Dimensions":
+	[
+		{
+			"@id":"Dimensions('CPT_FORMATION_PARAMETRES')"
+		},
+		{
+			"@id":"Dimensions('z_VALEUR')"
+		}
+	],
+	"Views@Code.links":[]
+}

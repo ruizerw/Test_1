@@ -1,0 +1,174 @@
+#region Prolog
+#****Begin: Generated Statements***
+#****End: Generated Statements****
+#########################################################################################
+# PROCESSUS DESCRIPTION
+#
+# Date:   03/11/2023
+# Auteur:  Auriane Lartigue
+#
+# Action: Process permettant d'executer un script PS réinitialisant les mdp des 7 comptes de formation
+# Cube: CPT_FORMATION
+#########################################################################################
+
+#==============================#
+#                     Define Variables                    #
+#==============================#
+##Variables
+c_Random = NumberToString( INT( RAND( ) * 1000000 ));
+c_Process = getProcessName;
+
+##Cubes
+c_Cub_CPT_FORMATION = 'CPT_FORMATION';
+c_Cub_Properties = '}CubeProperties';
+c_Cub_ClientGroups = '}ClientGroups';
+
+##Dimensions
+c_Dim_CPT_FORMATION_PARAMETRES = 'CPT_FORMATION_PARAMETRES';
+c_Dim_z_Valeur = 'z_VALEUR';
+
+##Monitoring processus
+#-------------------- Nom du processus --------------------#
+c_Pro = GetProcessName;
+#c_FolderUpload='TLS001:\Formation\Formation\comptes_formation.txt';
+c_FolderUpload= '..\comptes_formation.txt';
+n_cpt_lignes_fichier =0;
+
+#-------------------- Utilisateur --------------------#
+c_User=TM1User();
+IF(DIMIX('}Clients',c_User)=0);
+  c_User='Admin';
+  ELSE;
+  c_User = AttrS('}Clients',c_User,'}TM1_DefaultDisplayValue');
+ENDIF;
+
+#---Variable aléatoire pour générer un nom d'élément unique ---#
+c_Random_Digit = numberToString(INT(RAND * 1000000));
+
+##Constantes
+c_Valeur = 'VALEUR';
+c_USER_REINITIALISATION = 'USER_REINITIALISATION';
+c_Date = 'Date';
+c_str_CPT_FORMATION = 'CPT_FORMATION_';
+c_Groupe_Securite = 'CPT_FORMATION';
+
+##Vues and Sous-emsembles
+c_Vue_RAZ = 'z_Vue_RAZ_' | c_Process | '_' | c_Random;
+c_sub_RAZ = 'z_Subset_RAZ_' | c_Process | '_' | c_Random;
+
+#===============================#
+#               Gestion de la consignation            #
+#===============================#
+v_Logging = CellGetS(C_Cub_Properties, c_Cub_CPT_FORMATION, 'LOGGING');
+CellPutS('NO', C_Cub_Properties, c_Cub_CPT_FORMATION, 'LOGGING');
+
+#================================#
+#            Verification Droit Utilisateur        	     #
+#================================#
+# Si l'utilisateur n'appartient pas au groupe CPT_FORMATION
+# Il ne peut pas réinitialiser les mdp
+s_Message_Erreur = ''; 
+s_Profil = CellGetS(c_Cub_ClientGroups,c_User,c_Groupe_Securite);
+IF(s_Profil @= '' );
+  s_Message_Erreur = 'Vous n' | char(39) | 'avez pas les droits pour réinitialiser les mots de passe';
+  ProcessBreak;
+ENDIF;
+
+#================================#
+#                   Verification Parametre        	       #
+#================================#
+#Alerter avec un message à l'exécution du processus sur son action afin d'éviter une fausse manipulation des consultant 
+IF(UPPER(pValidation)@<>'OUI');
+  s_Message_Erreur = 'Les mots de passes des 7 comptes de formations ne seront pas réinitialisés.';
+  ProcessBreak;
+ENDIF;
+
+#==================================#
+#                 Execution du script PS                       #
+#==================================#
+IF(FileExists( 'C:\IENA\SCRIPTS\Reset_Password\reset.ps1')=0);
+    s_Message_Erreur = 'Fichier reset.ps1 introuvable';
+    ProcessBreak;
+ELSE;
+    n_WaitForEnd = 1; 
+    s_CommandLine = 'powershell.exe -File "C:\IENA\SCRIPTS\Reset_Password\reset.ps1"';
+    ExecuteCommand(s_CommandLine, n_WaitForEnd);
+ENDIF;
+#==================================#
+#                            Vue RAZ                                 #
+#==================================#
+#-----------------------Création de la vue-----------------------#
+ViewCreate(c_Cub_CPT_FORMATION, c_Vue_RAZ, 1);
+
+#-----------------------Création des sous-ensembles-----------------------#
+##CPT_FORMATION_PARAMETRES
+s_Dim = c_Dim_CPT_FORMATION_PARAMETRES;
+s_MDXRequest = '{TM1FILTERBYLEVEL(TM1SUBSETALL(['|s_Dim|'].['|s_Dim|']) , 0)}';
+SubsetCreateByMDX(c_Sub_RAZ, s_MDXRequest, 1);
+ViewSubsetAssign(c_Cub_CPT_FORMATION,c_Vue_RAZ, s_Dim ,c_Sub_RAZ);
+
+##z_Valeur
+s_Dim = c_Dim_z_Valeur;
+s_elem = c_Valeur; 
+SubsetCreate(s_Dim, c_Sub_RAZ, 1);
+SubsetElementInsert(s_Dim, c_Sub_RAZ, s_Elem, 1);
+ViewSubsetAssign(c_Cub_CPT_FORMATION,c_Vue_RAZ, s_Dim ,c_Sub_RAZ);
+
+#----------Deletion of data----------#
+ViewZeroOut(c_Cub_CPT_FORMATION, c_Vue_RAZ);
+
+#======================================#
+# Chargement informations dans CPT_FORMATION  #
+#======================================#
+#Nom de l'utilisateur ayant réinitialisé pour la dernière fois les mdp
+CellPutS( c_User,  c_Cub_CPT_FORMATION, c_USER_REINITIALISATION , c_Valeur);
+# Date d'execution 
+CellPutS( TIMST(Now(), ' \M \D, \Y at \H\p') ,  c_Cub_CPT_FORMATION, c_Date , c_Valeur);
+
+
+#==================================#
+#             Variables pour importer le fichier          #
+#==================================#
+n_ligne = 0 ;
+DatasourceNameforServer = c_FolderUpload ;
+DatasourceNameforClient = c_FolderUpload ;
+#endregion
+#region Data
+#****Begin: Generated Statements***
+#****End: Generated Statements****
+# Vérifier que le fichier à le bon format :  email  mdp
+n_ligne = n_ligne + 1 ; 
+if( n_ligne < 3 );
+    # Les 3 premieres lignes contiennent de la mise en forme
+   itemskip;
+endif;
+
+s_compte = DimensionElementPrincipalName( c_Dim_CPT_FORMATION_PARAMETRES, vCompte );
+
+IF(DIMIX(c_Dim_CPT_FORMATION_PARAMETRES , s_compte)=0);
+      s_Message_Erreur = s_Message_Erreur | 'Le compte de formation ' | vCompte | ' n existe pas';
+      ItemSkip;
+ELSE;
+    CellPutS( vMDP,  c_Cub_CPT_FORMATION, vCompte , c_Valeur);
+ENDIF;
+#endregion
+#region Epilog
+#****Begin: Generated Statements***
+#****End: Generated Statements****
+#===============================#
+#             Gestion de la consignation              # 
+#===============================#
+CellPutS(v_Logging, C_Cub_Properties, c_Cub_CPT_FORMATION, 'LOGGING');
+
+#===============================#
+#             Sauvegarde données du cube           # 
+#===============================#
+CubeSaveData(c_Cub_CPT_FORMATION);
+
+#===============================#
+#                    Gestion des erreurs                   #
+#===============================#
+IF(s_Message_Erreur@<>'');
+  ItemReject(s_Message_Erreur);
+ENDIF;
+#endregion

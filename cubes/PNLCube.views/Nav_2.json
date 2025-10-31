@@ -1,0 +1,102 @@
+{
+	"@type":"NativeView",
+	"Name":"Nav_2",
+	"Columns":
+	[
+		{
+			"Subset":
+			{
+				"@id":"Dimensions('month')/Hierarchies('month')/Subsets('Mois niveau 0 et 1')"
+			}
+		}
+	],
+	"Rows":
+	[
+		{
+			"Subset":
+			{
+				"Hierarchy":
+				{
+					"@id":"Dimensions('account2')/Hierarchies('account2')"
+				},
+				"Elements":
+				[
+					{
+						"@id":"Dimensions('account2')/Hierarchies('account2')/Elements('Total Expenses')"
+					},
+					{
+						"@id":"Dimensions('account2')/Hierarchies('account2')/Elements('Marketing')"
+					},
+					{
+						"@id":"Dimensions('account2')/Hierarchies('account2')/Elements('Advertising')"
+					},
+					{
+						"@id":"Dimensions('account2')/Hierarchies('account2')/Elements('Sales Promotions')"
+					},
+					{
+						"@id":"Dimensions('account2')/Hierarchies('account2')/Elements('Dealer Incentive Plan')"
+					},
+					{
+						"@id":"Dimensions('account2')/Hierarchies('account2')/Elements('Plant Overhead')"
+					},
+					{
+						"@id":"Dimensions('account2')/Hierarchies('account2')/Elements('Transportation Costs')"
+					},
+					{
+						"@id":"Dimensions('account2')/Hierarchies('account2')/Elements('General Administration')"
+					}
+				]
+			}
+		}
+	],
+	"Titles":
+	[
+		{
+			"Subset":
+			{
+				"Hierarchy":
+				{
+					"@id":"Dimensions('region')/Hierarchies('region')"
+				},
+				"Elements":
+				[
+					{
+						"@id":"Dimensions('region')/Hierarchies('region')/Elements('France')"
+					}
+				]
+			},
+			"Selected":
+			{
+				"@id":"Dimensions('region')/Hierarchies('region')/Elements('France')"
+			}
+		},
+		{
+			"Subset":
+			{
+				"Hierarchy":
+				{
+					"@id":"Dimensions('actvsbud')/Hierarchies('actvsbud')"
+				},
+				"Elements":
+				[
+					{
+						"@id":"Dimensions('actvsbud')/Hierarchies('actvsbud')/Elements('Variance')"
+					},
+					{
+						"@id":"Dimensions('actvsbud')/Hierarchies('actvsbud')/Elements('Actual')"
+					},
+					{
+						"@id":"Dimensions('actvsbud')/Hierarchies('actvsbud')/Elements('Budget')"
+					}
+				]
+			},
+			"Selected":
+			{
+				"@id":"Dimensions('actvsbud')/Hierarchies('actvsbud')/Elements('Actual')"
+			}
+		}
+	],
+	"SuppressEmptyColumns":false,
+	"SuppressEmptyRows":false,
+	"FormatString":"0.00"
+}

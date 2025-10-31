@@ -1,0 +1,12 @@
+{
+	"@type":"Hierarchy",
+	"Name":"z_VALEUR",
+	"Elements":
+	[
+		{
+			"Name":"VALEUR",
+			"Type":"String"
+		}
+	],
+	"Subsets@Code.links":[]
+}
